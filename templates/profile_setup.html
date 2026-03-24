@@ -1,0 +1,323 @@
+{% extends "base.html" %}
+
+{% block title %}Profile Setup - Krishi Sakhi{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header text-center bg-success text-white">
+                <h4><i class="fas fa-user-cog me-2"></i><span data-translate="setupProfile">Setup Your Farmer Profile</span></h4>
+            </div>
+            <div class="card-body">
+                <form method="POST">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="name" class="form-label" data-translate="fullName">Full Name</label>
+                            <input type="text" class="form-control" id="name" name="name" required 
+                                   data-translate="namePlaceholder">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="location" class="form-label" data-translate="location">Location</label>
+                            <input type="text" class="form-control" id="location" name="location" required 
+                                   data-translate="locationPlaceholder">
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="land_size" class="form-label" data-translate="landSize">Land Size (acres)</label>
+                            <input type="number" step="0.1" class="form-control" id="land_size" name="land_size"
+                                   data-translate="landSizePlaceholder">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="crop_type" class="form-label" data-translate="primaryCrop">Primary Crop</label>
+                            <select class="form-select" id="crop_type" name="crop_type">
+                                <option value="" data-translate="selectCrop">Select Crop</option>
+                                <option value="rice" data-translate="rice">Rice</option>
+                                <option value="wheat" data-translate="wheat">Wheat</option>
+                                <option value="sugarcane" data-translate="sugarcane">Sugarcane</option>
+                                <option value="cotton" data-translate="cotton">Cotton</option>
+                                <option value="vegetables" data-translate="vegetables">Vegetables</option>
+                                <option value="fruits" data-translate="fruits">Fruits</option>
+                                <option value="pulses" data-translate="pulses">Pulses</option>
+                                <option value="oilseeds" data-translate="oilseeds">Oilseeds</option>
+                                <option value="other" data-translate="other">Other</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="soil_type" class="form-label" data-translate="soilType">Soil Type</label>
+                            <select class="form-select" id="soil_type" name="soil_type">
+                                <option value="" data-translate="selectSoil">Select Soil Type</option>
+                                <option value="clay" data-translate="clay">Clay</option>
+                                <option value="sandy" data-translate="sandy">Sandy</option>
+                                <option value="loamy" data-translate="loamy">Loamy</option>
+                                <option value="silt" data-translate="silt">Silt</option>
+                                <option value="peaty" data-translate="peaty">Peaty</option>
+                                <option value="chalky" data-translate="chalky">Chalky</option>
+                                <option value="other" data-translate="other">Other</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="irrigation_type" class="form-label" data-translate="irrigationMethod">Irrigation Method</label>
+                            <select class="form-select" id="irrigation_type" name="irrigation_type">
+                                <option value="" data-translate="selectIrrigation">Select Irrigation</option>
+                                <option value="drip" data-translate="drip">Drip Irrigation</option>
+                                <option value="sprinkler" data-translate="sprinkler">Sprinkler</option>
+                                <option value="flood" data-translate="flood">Flood Irrigation</option>
+                                <option value="canal" data-translate="canal">Canal Irrigation</option>
+                                <option value="rainfed" data-translate="rainfed">Rain-fed</option>
+                                <option value="other" data-translate="other">Other</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="experience_years" class="form-label" data-translate="experienceYears">Years of Farming Experience</label>
+                        <input type="number" class="form-control" id="experience_years" name="experience_years"
+                               data-translate="experiencePlaceholder">
+                    </div>
+                    
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-success btn-lg">
+                            <i class="fas fa-save me-2"></i><span data-translate="completeSetup">Complete Setup</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Add profile setup specific translations
+    const profileSetupTranslations = {
+        en: {
+            setupProfile: "Setup Your Farmer Profile",
+            fullName: "Full Name",
+            namePlaceholder: "Enter your full name",
+            location: "Location",
+            locationPlaceholder: "Enter your farm location",
+            landSize: "Land Size (acres)",
+            landSizePlaceholder: "Enter land size in acres",
+            primaryCrop: "Primary Crop",
+            selectCrop: "Select Crop",
+            rice: "Rice",
+            wheat: "Wheat",
+            sugarcane: "Sugarcane",
+            cotton: "Cotton",
+            vegetables: "Vegetables",
+            fruits: "Fruits",
+            pulses: "Pulses",
+            oilseeds: "Oilseeds",
+            other: "Other",
+            soilType: "Soil Type",
+            selectSoil: "Select Soil Type",
+            clay: "Clay",
+            sandy: "Sandy",
+            loamy: "Loamy",
+            silt: "Silt",
+            peaty: "Peaty",
+            chalky: "Chalky",
+            irrigationMethod: "Irrigation Method",
+            selectIrrigation: "Select Irrigation",
+            drip: "Drip Irrigation",
+            sprinkler: "Sprinkler",
+            flood: "Flood Irrigation",
+            canal: "Canal Irrigation",
+            rainfed: "Rain-fed",
+            experienceYears: "Years of Farming Experience",
+            experiencePlaceholder: "Enter years of experience",
+            completeSetup: "Complete Setup"
+        },
+        ml: {
+            setupProfile: "നിങ്ങളുടെ കർഷക പ്രൊഫൈൽ സജ്ജമാക്കുക",
+            fullName: "പൂർണ്ണ നാമം",
+            namePlaceholder: "നിങ്ങളുടെ പൂർണ്ണ നാമം നൽകുക",
+            location: "സ്ഥാനം",
+            locationPlaceholder: "നിങ്ങളുടെ ഫാം സ്ഥാനം നൽകുക",
+            landSize: "നിലം വലുപ്പം (ഏക്കർ)",
+            landSizePlaceholder: "ഏക്കറിൽ നിലം വലുപ്പം നൽകുക",
+            primaryCrop: "പ്രാഥമിക പയർ",
+            selectCrop: "പയർ തിരഞ്ഞെടുക്കുക",
+            rice: "അരി",
+            wheat: "ഗോതമ്പ്",
+            sugarcane: "കരിമ്പ്",
+            cotton: "പരുത്തി",
+            vegetables: "പച്ചക്കറികൾ",
+            fruits: "പഴങ്ങൾ",
+            pulses: "പയറുവർഗ്ഗങ്ങൾ",
+            oilseeds: "എണ്ണക്കുരു",
+            other: "മറ്റുള്ളവ",
+            soilType: "മണ്ണ് തരം",
+            selectSoil: "മണ്ണ് തരം തിരഞ്ഞെടുക്കുക",
+            clay: "കളിമണ്ണ്",
+            sandy: "മണൽ മണ്ണ്",
+            loamy: "എക്കൽ മണ്ണ്",
+            silt: "ചേറ് മണ്ണ്",
+            peaty: "പീറ്റ് മണ്ണ്",
+            chalky: "ചോക്ക് മണ്ണ്",
+            irrigationMethod: "ജലസേചന രീതി",
+            selectIrrigation: "ജലസേചനം തിരഞ്ഞെടുക്കുക",
+            drip: "ഡ്രിപ്പ് ജലസേചനം",
+            sprinkler: "സ്പ്രിങ്ക്ലർ",
+            flood: "വെള്ളപ്പൊക്ക ജലസേചനം",
+            canal: "കനാൽ ജലസേചനം",
+            rainfed: "മഴ നീരാവി",
+            experienceYears: "കൃഷി പരിചയ വർഷങ്ങൾ",
+            experiencePlaceholder: "പരിചയ വർഷങ്ങൾ നൽകുക",
+            completeSetup: "സജ്ജീകരണം പൂർത്തിയാക്കുക"
+        },
+        hi: {
+            setupProfile: "अपना किसान प्रोफाइल सेटअप करें",
+            fullName: "पूरा नाम",
+            namePlaceholder: "अपना पूरा नाम दर्ज करें",
+            location: "स्थान",
+            locationPlaceholder: "अपना फार्म स्थान दर्ज करें",
+            landSize: "जमीन का आकार (एकड़)",
+            landSizePlaceholder: "एकड़ में जमीन का आकार दर्ज करें",
+            primaryCrop: "मुख्य फसल",
+            selectCrop: "फसल चुनें",
+            rice: "चावल",
+            wheat: "गेहूं",
+            sugarcane: "गन्ना",
+            cotton: "कपास",
+            vegetables: "सब्जियां",
+            fruits: "फल",
+            pulses: "दालें",
+            oilseeds: "तिलहन",
+            other: "अन्य",
+            soilType: "मिट्टी का प्रकार",
+            selectSoil: "मिट्टी का प्रकार चुनें",
+            clay: "चिकनी मिट्टी",
+            sandy: "बलुई मिट्टी",
+            loamy: "दोमट मिट्टी",
+            silt: "गाद मिट्टी",
+            peaty: "पीट मिट्टी",
+            chalky: "चाक मिट्टी",
+            irrigationMethod: "सिंचाई विधि",
+            selectIrrigation: "सिंचाई चुनें",
+            drip: "ड्रिप सिंचाई",
+            sprinkler: "स्प्रिंकलर",
+            flood: "बाढ़ सिंचाई",
+            canal: "नहर सिंचाई",
+            rainfed: "वर्षा आधारित",
+            experienceYears: "कृषि अनुभव के वर्ष",
+            experiencePlaceholder: "अनुभव के वर्ष दर्ज करें",
+            completeSetup: "सेटअप पूरा करें"
+        },
+        ta: {
+            setupProfile: "உங்கள் விவசாயி சுயவிவரத்தை அமைக்கவும்",
+            fullName: "முழு பெயர்",
+            namePlaceholder: "உங்கள் முழு பெயரை உள்ளிடவும்",
+            location: "இடம்",
+            locationPlaceholder: "உங்கள் பண்ணை இடத்தை உள்ளிடவும்",
+            landSize: "நில அளவு (ஏக்கர்)",
+            landSizePlaceholder: "ஏக்கரில் நில அளவை உள்ளிடவும்",
+            primaryCrop: "முதன்மை பயிர்",
+            selectCrop: "பயிரைத் தேர்ந்தெடுக்கவும்",
+            rice: "அரிசி",
+            wheat: "கோதுமை",
+            sugarcane: "கரும்பு",
+            cotton: "பருத்தி",
+            vegetables: "காய்கறிகள்",
+            fruits: "பழங்கள்",
+            pulses: "பருப்பு வகைகள்",
+            oilseeds: "எண்ணெய் வித்துக்கள்",
+            other: "மற்றவை",
+            soilType: "மண் வகை",
+            selectSoil: "மண் வகையைத் தேர்ந்தெடுக்கவும்",
+            clay: "களிமண்",
+            sandy: "மணல் மண்",
+            loamy: "வண்டல் மண்",
+            silt: "எருவை மண்",
+            peaty: "பீட் மண்",
+            chalky: "சுண்ணாம்பு மண்",
+            irrigationMethod: "பாசன முறை",
+            selectIrrigation: "பாசனத்தைத் தேர்ந்தெடுக்கவும்",
+            drip: "டிரிப் பாசனம்",
+            sprinkler: "தெளிப்பான்",
+            flood: "வௌளப் பாசனம்",
+            canal: "கால்வாய் பாசனம்",
+            rainfed: "மழை நீர்ப்பாசனம்",
+            experienceYears: "விவசாய அனுபவ ஆண்டுகள்",
+            experiencePlaceholder: "அனுபவ ஆண்டுகளை உள்ளிடவும்",
+            completeSetup: "அமைப்பை முடிக்கவும்"
+        },
+        te: {
+            setupProfile: "మీ రైతు ప్రొఫైల్‌ను సెటప్ చేయండి",
+            fullName: "పూర్తి పేరు",
+            namePlaceholder: "మీ పూర్తి పేరును నమోదు చేయండి",
+            location: "స్థానం",
+            locationPlaceholder: "మీ ఫార్మ్ స్థానాన్ని నమోదు చేయండి",
+            landSize: "భూమి పరిమాణం (ఎకరాలు)",
+            landSizePlaceholder: "ఎకరాలలో భూమి పరిమాణాన్ని నమోదు చేయండి",
+            primaryCrop: "ప్రాథమిక పంట",
+            selectCrop: "పంటను ఎంచుకోండి",
+            rice: "వరి",
+            wheat: "గోధుమ",
+            sugarcane: "చెరకు",
+            cotton: "పత్తి",
+            vegetables: "కూరగాయలు",
+            fruits: "పండ్లు",
+            pulses: "పప్పులు",
+            oilseeds: "నూనెగింజలు",
+            other: "ఇతర",
+            soilType: "నేల రకం",
+            selectSoil: "నేల రకాన్ని ఎంచుకోండి",
+            clay: "జేడి నేల",
+            sandy: "ఇసుక నేల",
+            loamy: "దోమ నేల",
+            silt: "అవక్షేప నేల",
+            peaty: "పీట్ నేల",
+            chalky: "సున్నం నేల",
+            irrigationMethod: "నీటిపారుదల పద్ధతి",
+            selectIrrigation: "నీటిపారుదలను ఎంచుకోండి",
+            drip: "డ్రిప్ నీటిపారుదల",
+            sprinkler: "స్ప్రింక్లర్",
+            flood: "వరద నీటిపారుదల",
+            canal: "కాలువ నీటిపారుదల",
+            rainfed: "వర్షాధారం",
+            experienceYears: "వ్యవసాయ అనుభవం సంవత్సరాలు",
+            experiencePlaceholder: "అనుభవం సంవత్సరాలు నమోదు చేయండి",
+            completeSetup: "సెటప్ పూర్తి చేయండి"
+        }
+    };
+
+    // Merge profile setup translations with base translations
+    document.addEventListener('DOMContentLoaded', function() {
+        // Wait for base translations to load
+        setTimeout(function() {
+            if (typeof translations !== 'undefined') {
+                // Merge translations
+                for (const lang in profileSetupTranslations) {
+                    if (translations[lang]) {
+                        translations[lang] = {...translations[lang], ...profileSetupTranslations[lang]};
+                    } else {
+                        translations[lang] = profileSetupTranslations[lang];
+                    }
+                }
+                
+                // Apply translations if language is already set
+                if (typeof currentLanguage !== 'undefined') {
+                    document.querySelectorAll('[data-translate]').forEach(function(element) {
+                        const key = element.getAttribute('data-translate');
+                        if (translations[currentLanguage] && translations[currentLanguage][key]) {
+                            if (element.tagName === 'INPUT' || element.tagName === 'SELECT') {
+                                element.placeholder = translations[currentLanguage][key];
+                            } else {
+                                element.textContent = translations[currentLanguage][key];
+                            }
+                        }
+                    });
+                }
+            }
+        }, 100);
+    });
+</script>
+{% endblock %}

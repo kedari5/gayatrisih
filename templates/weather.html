@@ -1,0 +1,299 @@
+{% extends "base.html" %}
+
+{% block title %}Weather Information - Krishi Sakhi{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2 data-translate="weatherInformation">Weather Information</h2>
+    
+    {% if weather %}
+    <div class="row">
+        <!-- Current Weather -->
+        <div class="col-md-6 mb-4">
+            <div class="card h-100">
+                <div class="card-header bg-primary text-white">
+                    <h5><span data-translate="currentWeather">Current Weather in</span> {{ weather.name or 'Your Location' }}</h5>
+                </div>
+                <div class="card-body text-center">
+                    <div class="weather-icon mb-3">
+                        {% if weather.weather and weather.weather[0].main == 'Clear' %}
+                        <i class="fas fa-sun fa-3x text-warning"></i>
+                        {% elif weather.weather and weather.weather[0].main == 'Clouds' %}
+                        <i class="fas fa-cloud fa-3x text-secondary"></i>
+                        {% elif weather.weather and weather.weather[0].main == 'Rain' %}
+                        <i class="fas fa-cloud-rain fa-3x text-info"></i>
+                        {% elif weather.weather and weather.weather[0].main == 'Snow' %}
+                        <i class="fas fa-snowflake fa-3x text-light"></i>
+                        {% else %}
+                        <i class="fas fa-cloud fa-3x text-secondary"></i>
+                        {% endif %}
+                    </div>
+                    <h2 class="display-4">{{ weather.main.temp | default(28) }}°C</h2>
+                    <p class="text-capitalize fs-5">{{ weather.weather[0].description | default('clear sky') if weather.weather else 'clear sky' }}</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Weather Details -->
+        <div class="col-md-6 mb-4">
+            <div class="card h-100">
+                <div class="card-header bg-info text-white">
+                    <h5 data-translate="weatherDetails">Weather Details</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-6 mb-3">
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-temperature-high fa-2x text-danger me-3"></i>
+                                <div>
+                                    <div data-translate="feelsLike">Feels Like</div>
+                                    <strong>{{ weather.main.feels_like | default(30) }}°C</strong>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-6 mb-3">
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-tint fa-2x text-primary me-3"></i>
+                                <div>
+                                    <div data-translate="humidity">Humidity</div>
+                                    <strong>{{ weather.main.humidity | default(65) }}%</strong>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-6 mb-3">
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-wind fa-2x text-success me-3"></i>
+                                <div>
+                                    <div data-translate="windSpeed">Wind Speed</div>
+                                    <strong>{{ weather.wind.speed | default(3.5) }} m/s</strong>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-6 mb-3">
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-compress-arrows-alt fa-2x text-warning me-3"></i>
+                                <div>
+                                    <div data-translate="pressure">Pressure</div>
+                                    <strong>{{ weather.main.pressure | default(1013) }} hPa</strong>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-6 mb-3">
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-eye fa-2x text-secondary me-3"></i>
+                                <div>
+                                    <div data-translate="visibility">Visibility</div>
+                                    <strong>{{ (weather.visibility / 1000) | round(1) | default(10) if weather.visibility else 10 }} km</strong>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-6 mb-3">
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-cloud-sun fa-2x text-info me-3"></i>
+                                <div>
+                                    <div data-translate="cloudiness">Cloudiness</div>
+                                    <strong>{{ weather.clouds.all | default(20) if weather.clouds else 20 }}%</strong>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Weather Forecast (Placeholder) -->
+    <div class="card mb-4">
+        <div class="card-header bg-success text-white">
+            <h5 data-translate="weatherForecast">5-Day Weather Forecast</h5>
+        </div>
+        <div class="card-body">
+            <div class="alert alert-info">
+                <i class="fas fa-info-circle me-2"></i>
+                <span data-translate="forecastNote">Detailed weather forecast will be available soon. We're working on integrating advanced weather prediction features.</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Farming Recommendations -->
+    <div class="card">
+        <div class="card-header bg-warning text-dark">
+            <h5 data-translate="farmingRecommendations">Farming Recommendations</h5>
+        </div>
+        <div class="card-body">
+            {% if weather.main.temp > 30 %}
+            <div class="alert alert-warning">
+                <i class="fas fa-temperature-high me-2"></i>
+                <span data-translate="hotWeatherAdvice">High temperature alert! Consider increasing irrigation and providing shade for sensitive crops.</span>
+            </div>
+            {% elif weather.main.temp < 15 %}
+            <div class="alert alert-info">
+                <i class="fas fa-temperature-low me-2"></i>
+                <span data-translate="coldWeatherAdvice">Low temperature warning! Protect sensitive plants from cold stress with covers or mulch.</span>
+            </div>
+            {% else %}
+            <div class="alert alert-success">
+                <i class="fas fa-check-circle me-2"></i>
+                <span data-translate="idealWeatherAdvice">Ideal weather conditions for most farming activities. Good time for planting and cultivation.</span>
+            </div>
+            {% endif %}
+
+            {% if weather.weather and weather.weather[0].main == 'Rain' %}
+            <div class="alert alert-primary">
+                <i class="fas fa-cloud-rain me-2"></i>
+                <span data-translate="rainAdvice">Rain expected. Perfect time for irrigation-dependent activities. Avoid chemical applications.</span>
+            </div>
+            {% endif %}
+
+            {% if weather.wind.speed > 5 %}
+            <div class="alert alert-secondary">
+                <i class="fas fa-wind me-2"></i>
+                <span data-translate="windyAdvice">Windy conditions. Secure loose items and consider wind protection for delicate plants.</span>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    {% else %}
+    <div class="alert alert-warning">
+        <i class="fas fa-exclamation-triangle me-2"></i>
+        <span data-translate="weatherUnavailable">Weather information not available. Please check your location settings or try again later.</span>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Add weather specific translations
+    const weatherTranslations = {
+        en: {
+            weatherInformation: "Weather Information",
+            currentWeather: "Current Weather in",
+            weatherDetails: "Weather Details",
+            feelsLike: "Feels Like",
+            humidity: "Humidity",
+            windSpeed: "Wind Speed",
+            pressure: "Pressure",
+            visibility: "Visibility",
+            cloudiness: "Cloudiness",
+            weatherForecast: "5-Day Weather Forecast",
+            forecastNote: "Detailed weather forecast will be available soon. We're working on integrating advanced weather prediction features.",
+            farmingRecommendations: "Farming Recommendations",
+            hotWeatherAdvice: "High temperature alert! Consider increasing irrigation and providing shade for sensitive crops.",
+            coldWeatherAdvice: "Low temperature warning! Protect sensitive plants from cold stress with covers or mulch.",
+            idealWeatherAdvice: "Ideal weather conditions for most farming activities. Good time for planting and cultivation.",
+            rainAdvice: "Rain expected. Perfect time for irrigation-dependent activities. Avoid chemical applications.",
+            windyAdvice: "Windy conditions. Secure loose items and consider wind protection for delicate plants.",
+            weatherUnavailable: "Weather information not available. Please check your location settings or try again later."
+        },
+        ml: {
+            weatherInformation: "കാലാവസ്ഥ വിവരങ്ങൾ",
+            currentWeather: "നിലവിലെ കാലാവസ്ഥ",
+            weatherDetails: "കാലാവസ്ഥ വിശദാംശങ്ങൾ",
+            feelsLike: "അനുഭവപ്പെടുന്ന താപനില",
+            humidity: "ആർദ്രത",
+            windSpeed: "കാറ്റിന്റെ വേഗത",
+            pressure: "മർദ്ദം",
+            visibility: "ദൃശ്യത",
+            cloudiness: "മേഘാവൃതം",
+            weatherForecast: "5-ദിവസ കാലാവസ്ഥ പ്രവചനം",
+            forecastNote: "വിശദമായ കാലാവസ്ഥ പ്രവചനം ഉടൻ ലഭ്യമാകും. നൂതന കാലാവസ്ഥ പ്രവചന സവിശേഷതകൾ സംയോജിപ്പിക്കുന്നതിന് ഞങ്ങൾ പ്രവർത്തിക്കുന്നു.",
+            farmingRecommendations: "കൃഷി ശുപാർശകൾ",
+            hotWeatherAdvice: "ഉയർന്ന താപനില മുന്നറിയിപ്പ്! സൂക്ഷ്മപയറുകൾക്ക് നിഴൽ നൽകുന്നതും ജലസേചനം വർദ്ധിപ്പിക്കുന്നതും പരിഗണിക്കുക.",
+            coldWeatherAdvice: "കുറഞ്ഞ താപനില മുന്നറിയിപ്പ്! സൂക്ഷ്മചെടികളെ തണുത്ത സമ്മർദ്ദത്തിൽ നിന്ന് മൾച്ച് അല്ലെങ്കിൽ കവറുകൾ ഉപയോഗിച്ച് സംരക്ഷിക്കുക.",
+            idealWeatherAdvice: "മിക്ക കൃഷി പ്രവർത്തനങ്ങൾക്കും അനുയോജ്യമായ കാലാവസ്ഥ. നടുന്നതിനും കൃഷി ചെയ്യുന്നതിനും നല്ല സമയം.",
+            rainAdvice: "മഴ പ്രതീക്ഷിക്കുന്നു. ജലസേചന-ആശ്രിത പ്രവർത്തനങ്ങൾക്ക് അനുയോജ്യമായ സಮയം. രാസ പ്രയോഗങ്ങൾ ഒഴിവാക്കുക.",
+            windyAdvice: "കാറ്റടിക്കുന്ന അവസ്ഥ. അയഞ്ഞ ഇനങ്ങൾ സുരക്ഷിതമാക്കുക, സൂക്ഷ്മചെടികൾക്ക് കാറ്റിൽ നിന്നുള്ള സംരക്ഷണം പരിഗണിക്കുക.",
+            weatherUnavailable: "കാലാവസ്ഥ വിവരങ്ങൾ ലഭ്യമല്ല. ദയവായി നിങ്ങളുടെ ലൊക്കേഷൻ ക്രമീകരണങ്ങൾ പരിശോധിക്കുക അല്ലെങ്കിൽ പിന്നീട് വീണ്ടും ശ്രമിക്കുക."
+        },
+        hi: {
+            weatherInformation: "मौसम की जानकारी",
+            currentWeather: "वर्तमान मौसम",
+            weatherDetails: "मौसम का विवरण",
+            feelsLike: "अनुभव हो रहा तापमान",
+            humidity: "नमी",
+            windSpeed: "हवा की गति",
+            pressure: "दबाव",
+            visibility: "दृश्यता",
+            cloudiness: "बादल",
+            weatherForecast: "5-दिन का मौसम पूर्वानुमान",
+            forecastNote: "विस्तृत मौसम पूर्वानुमान जल्द ही उपलब्ध होगा। हम उन्नत मौसम भविष्यवाणी सुविधाओं को एकीकृत करने पर काम कर रहे हैं।",
+            farmingRecommendations: "कृषि सिफारिशें",
+            hotWeatherAdvice: "उच्च तापमान चेतावनी! संवेदनशील फसलों के लिए सिंचाई बढ़ाने और छाया प्रदान करने पर विचार करें।",
+            coldWeatherAdvice: "कम तापमान चेतावनी! संवेदनशील पौधों को कवर या मल्च से ठंडे तनाव से बचाएं।",
+            idealWeatherAdvice: "अधिकांश कृषि गतिविधियों के लिए आदर्श मौसम की स्थिति। रोपण और खेती के लिए अच्छा समय।",
+            rainAdvice: "बारिश की संभावना। सिंचाई-निर्भर गतिविधियों के लिए एकदम सही समय। रासायनिक अनुप्रयोगों से बचें।",
+            windyAdvice: "तूफानी स्थितियां। ढीली वस्तुओं को सुरक्षित करें और नाजुक पौधों के लिए हवा संरक्षण पर विचार करें।",
+            weatherUnavailable: "मौसम की जानकारी उपलब्ध नहीं है। कृपया अपनी लोकेशन सेटिंग्स जांचें या बाद में पुनः प्रयास करें।"
+        },
+        ta: {
+            weatherInformation: "வானிலை தகவல்",
+            currentWeather: "தற்போதைய வானிலை",
+            weatherDetails: "வானிலை விவரங்கள்",
+            feelsLike: "உணரும் வெப்பநிலை",
+            humidity: "ஈரப்பதம்",
+            windSpeed: "காற்றின் வேகம்",
+            pressure: "அழுத்தம்",
+            visibility: "தெரிவுத்திறன்",
+            cloudiness: "மேகம்",
+            weatherForecast: "5-நாள் வானிலை முன்னறிவிப்பு",
+            forecastNote: "விரிவான வானிலை முன்னறிவிப்பு விரைவில் கிடைக்கும். மேம்பட்ட வானிலை கணிப்பு அம்சங்களை ஒருங்கிணைப்பதில் நாங்கள் பணியாற்றி வருகிறோம்.",
+            farmingRecommendations: "விவசாய பரிந்துரைகள்",
+            hotWeatherAdvice: "அதிக வெப்பநிலை எச்சரிக்கை! உணர்திறன் பயிர்களுக்கு நீர்ப்பாசனத்தை அதிகரிப்பதையும் நிழலை வழங்குவதையும் கருத்தில் கொள்ளுங்கள்.",
+            coldWeatherAdvice: "குறைந்த வெப்பநிலை எச்சரிக்கை! உணர்திறன் தாவரங்களை கவர்கள் அல்லது மல்ச் மூலம் குளிர் மன அழுத்தத்திலிருந்து பாதுகாக்கவும்.",
+            idealWeatherAdvice: "பெரும்பாலான விவசாய நடவடிக்கைகளுக்கு சிறந்த வானிலை நிலைமைகள். நடவு மற்றும் சாகுபடிக்கு நல்ல நேரம்.",
+            rainAdvice: "மழை எதிர்பார்க்கப்படுகிறது. நீர்ப்பாசனம் சார்ந்த நடவடிக்கைகளுக்கு சரியான நேரம். இரசாயன பயன்பாடுகளை தவிர்க்கவும்.",
+            windyAdvice: "காற்று நிலைமைகள். தளர்வான பொருட்களை பாதுகாப்பாக வைத்து, உணர்திறன் தாவரங்களுக்கு காற்று பாதுகாப்பை கருத்தில் கொள்ளுங்கள்.",
+            weatherUnavailable: "வானிலை தகவல் கிடைக்கவில்லை. தயவுசெய்து உங்கள் இட அமைப்புகளை சரிபார்க்கவும் அல்லது பிறகு மீண்டும் முயற்சிக்கவும்."
+        },
+        te: {
+            weatherInformation: "వాతావరణ సమాచారం",
+            currentWeather: "ప్రస్తుత వాతావరణం",
+            weatherDetails: "వాతావరణ వివరాలు",
+            feelsLike: "అనుభవపడే ఉష్ణోగ్రత",
+            humidity: "ఆర్ద్రత",
+            windSpeed: "గాలి వేగం",
+            pressure: "పీడనం",
+            visibility: "దృశ్యమానత",
+            cloudiness: "మేఘం",
+            weatherForecast: "5-రోజుల వాతావరణ అంచనా",
+            forecastNote: "వివరణాత్మక వాతావరణ అంచనా త్వరలో అందుబాటులోకి వస్తుంది. మేము అధునాతన వాతావరణ అంచనా లక్షణాలను ఏకీకృతం చేయడంపై పని చేస్తున్నాము.",
+            farmingRecommendations: "వ్యవసాయ సిఫార్సులు",
+            hotWeatherAdvice: "అధిక ఉష్ణోగ్రత హెచ్చరిక! సున్నితమైన పంటలకు నీటిపారుదల పెంచడం మరియు నీడ అందించడం గురించి ఆలోచించండి.",
+            coldWeatherAdvice: "తక్కువ ఉష్ణోగ్రత హెచ్చरిక! సున్నితమైన మొక్కలను కవర్లు లేదా మల్చ్ ఉపయోగించి చలి ఒత్తిడి నుండి రక్షించండి.",
+            idealWeatherAdvice: "చాలా వ్యవసాయ కార్యకలాపాలకు అనుకూలమైన వాతావరణ పరిస్థితులు. నాటడం మరియు సాగుకు మంచి సమయం.",
+            rainAdvice: "వర్షం expected. నీటిపారుదల-ఆధారిత కార్యకలాపాలకు సరైన సమయం. రసాయన అనువర్తనాలను నివారించండి.",
+            windyAdvice: "గాలి పరిస్థితులు. వదులుగా ఉన్న వస్తువులను సురక్షితం చేయండి మరియు సున్నితమైన మొక్కలకు గాలి నుండి రక్షణ గురించి ఆలోచించండి.",
+            weatherUnavailable: "వాతావరణ సమాచారం అందుబాటులో లేదు. దయచేసి మీ స్థాన సెట్టింగ్లను తనిఖీ చేయండి లేదా తర్వాత మళ్లీ ప్రయత్నించండి."
+        }
+    };
+
+    // Merge weather translations with base translations
+    document.addEventListener('DOMContentLoaded', function() {
+        // Wait for base translations to load
+        setTimeout(function() {
+            if (typeof translations !== 'undefined') {
+                // Merge translations
+                for (const lang in weatherTranslations) {
+                    if (translations[lang]) {
+                        translations[lang] = {...translations[lang], ...weatherTranslations[lang]};
+                    } else {
+                        translations[lang] = weatherTranslations[lang];
+                    }
+                }
+                
+                // Apply translations if language is already set
+                if (typeof currentLanguage !== 'undefined') {
+                    document.querySelectorAll('[data-translate]').forEach(function(element) {
+                        const key = element.getAttribute('data-translate');
+                        if (translations[currentLanguage] && translations[currentLanguage][key]) {
+                            element.textContent = translations[currentLanguage][key];
+                        }
+                    });
+                }
+            }
+        }, 100);
+    });
+</script>
+{% endblock %}

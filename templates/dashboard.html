@@ -1,0 +1,196 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - Krishi Sakhi{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-8">
+        <h2 data-translate="welcomeMessage">Welcome, {% if current_user.farmer_profile %}{{ current_user.farmer_profile.name }}{% else %}Farmer{% endif %}!</h2>
+        
+        <!-- Weather Widget -->
+        {% if weather %}
+        <div class="card mb-4">
+            <div class="card-header bg-info text-white">
+                <h5><i class="fas fa-cloud-sun me-2"></i><span data-translate="weatherIn">Weather in</span> {{ weather.name }}</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h4>{{ weather.main.temp }}°C</h4>
+                        <p class="text-capitalize">{{ weather.weather[0].description }}</p>
+                    </div>
+                    <div class="col-md-6">
+                        <p><span data-translate="humidity">Humidity</span>: {{ weather.main.humidity }}%</p>
+                        <p><span data-translate="wind">Wind</span>: {{ weather.wind.speed }} m/s</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+        
+        <!-- Recent Chat Messages -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5><i class="fas fa-comments me-2"></i><span data-translate="recentConversations">Recent Conversations</span></h5>
+            </div>
+            <div class="card-body">
+                {% if recent_chats %}
+                    {% for chat in recent_chats %}
+                    <div class="mb-2">
+                        <strong data-translate="questionShort">Q:</strong> {{ chat.message[:50] }}...
+                        <small class="text-muted">{{ chat.timestamp.strftime('%d %b %H:%M') }}</small>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <p class="text-muted" data-translate="noConversations">No conversations yet. Start chatting with your AI assistant!</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4">
+        <!-- Quick Actions -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5><i class="fas fa-bolt me-2"></i><span data-translate="quickActions">Quick Actions</span></h5>
+            </div>
+            <div class="card-body">
+                <a href="{{ url_for('chat') }}" class="btn btn-success btn-sm mb-2 w-100" data-translate="chatAssistant">Chat Assistant</a>
+                <a href="{{ url_for('weather') }}" class="btn btn-info btn-sm mb-2 w-100" data-translate="weather">Weather</a>
+                <a href="{{ url_for('market_prices') }}" class="btn btn-warning btn-sm mb-2 w-100" data-translate="marketPrices">Market Prices</a>
+                <a href="{{ url_for('activities') }}" class="btn btn-secondary btn-sm w-100" data-translate="logActivity">Log Activity</a>
+            </div>
+        </div>
+        
+        <!-- Market Prices Preview -->
+        {% if market_prices %}
+        <div class="card">
+            <div class="card-header">
+                <h5><i class="fas fa-chart-line me-2"></i><span data-translate="marketPrices">Market Prices</span></h5>
+            </div>
+            <div class="card-body">
+                {% for crop, data in market_prices.items() %}
+                    {% if loop.index <= 3 %}
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>{{ crop.title() }}</span>
+                        <span class="fw-bold">₹{{ data.price }}</span>
+                    </div>
+                    {% endif %}
+                {% endfor %}
+                <a href="{{ url_for('market_prices') }}" class="btn btn-sm btn-outline-primary" data-translate="viewAll">View All</a>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Add dashboard-specific translations
+    const dashboardTranslations = {
+        en: {
+            welcomeMessage: "Welcome,",
+            weatherIn: "Weather in",
+            humidity: "Humidity",
+            wind: "Wind",
+            recentConversations: "Recent Conversations",
+            questionShort: "Q:",
+            noConversations: "No conversations yet. Start chatting with your AI assistant!",
+            quickActions: "Quick Actions",
+            chatAssistant: "Chat Assistant",
+            weather: "Weather",
+            marketPrices: "Market Prices",
+            logActivity: "Log Activity",
+            viewAll: "View All"
+        },
+        ml: {
+            welcomeMessage: "സ്വാഗതം,",
+            weatherIn: "കാലാവസ്ഥ",
+            humidity: "ആർദ്രത",
+            wind: "കാറ്റ്",
+            recentConversations: "അടുത്തിടെയുള്ള സംഭാഷണങ്ങൾ",
+            questionShort: "ചോ:",
+            noConversations: "ഇതുവരെ സംഭാഷണങ്ങളൊന്നുമില്ല. നിങ്ങളുടെ AI അസിസ്റ്റന്റുമായി ചാറ്റിംഗ് ആരംഭിക്കൂ!",
+            quickActions: "ദ്രുത പ്രവർത്തനങ്ങൾ",
+            chatAssistant: "ചാറ്റ് അസിസ്റ്റന്റ്",
+            weather: "കാലാവസ്ഥ",
+            marketPrices: "മാർക്കറ്റ് വിലകൾ",
+            logActivity: "പ്രവർത്തനം രേഖപ്പെടുത്തുക",
+            viewAll: "എല്ലാം കാണുക"
+        },
+        hi: {
+            welcomeMessage: "स्वागत है,",
+            weatherIn: "मौसम",
+            humidity: "नमी",
+            wind: "हवा",
+            recentConversations: "हाल की बातचीत",
+            questionShort: "प्र:",
+            noConversations: "अभी तक कोई बातचीत नहीं हुई है। अपने AI सहायक के साथ चैटिंग शुरू करें!",
+            quickActions: "त्वरित कार्य",
+            chatAssistant: "चैट सहायक",
+            weather: "मौसम",
+            marketPrices: "बाजार कीमतें",
+            logActivity: "गतिविधि लॉग करें",
+            viewAll: "सभी देखें"
+        },
+        ta: {
+            welcomeMessage: "வரவேற்பு,",
+            weatherIn: "வானிலை",
+            humidity: "ஈரப்பதம்",
+            wind: "காற்று",
+            recentConversations: "சமீபத்திய உரையாடல்கள்",
+            questionShort: "கே:",
+            noConversations: "இதுவரை உரையாடல்கள் இல்லை. உங்கள் AI உதவியாளருடன் அரட்டையைத் தொடங்குங்கள்!",
+            quickActions: "விரைவு செயல்கள்",
+            chatAssistant: "அரட்டை உதவியாளர்",
+            weather: "வானிலை",
+            marketPrices: "சந்தை விலைகள்",
+            logActivity: "செயல்பாட்டை பதிவு செய்யுங்கள்",
+            viewAll: "அனைத்தையும் காட்டு"
+        },
+        te: {
+            welcomeMessage: "స్వాగతం,",
+            weatherIn: "వాతావరణం",
+            humidity: "ఆర్ద్రత",
+            wind: "గాలి",
+            recentConversations: "ఇటీవలి సంభాషణలు",
+            questionShort: "ప్ర:",
+            noConversations: "ఇంతవరకు సంభాషణలు లేవు. మీ AI అసిస్టెంట్తో చాటింగ్ ప్రారంభించండి!",
+            quickActions: "త్వరిత చర్యలు",
+            chatAssistant: "చాట్ అసిస్టెంట్",
+            weather: "వాతావరణం",
+            marketPrices: "మార్కెట్ ధరలు",
+            logActivity: "చర్యను లాగ్ చేయండి",
+            viewAll: "అన్నీ వీక్షించండి"
+        }
+    };
+
+    // Merge dashboard translations with base translations
+    document.addEventListener('DOMContentLoaded', function() {
+        // Wait for base translations to load
+        setTimeout(function() {
+            if (typeof translations !== 'undefined') {
+                // Merge translations
+                for (const lang in dashboardTranslations) {
+                    if (translations[lang]) {
+                        translations[lang] = {...translations[lang], ...dashboardTranslations[lang]};
+                    } else {
+                        translations[lang] = dashboardTranslations[lang];
+                    }
+                }
+                
+                // Apply translations if language is already set
+                if (typeof currentLanguage !== 'undefined') {
+                    document.querySelectorAll('[data-translate]').forEach(function(element) {
+                        const key = element.getAttribute('data-translate');
+                        if (translations[currentLanguage] && translations[currentLanguage][key]) {
+                            element.textContent = translations[currentLanguage][key];
+                        }
+                    });
+                }
+            }
+        }, 100);
+    });
+</script>
+{% endblock %}

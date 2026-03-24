@@ -1,0 +1,139 @@
+{% extends "base.html" %}
+
+{% block title %}Login - Krishi Sakhi{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6 col-lg-5">
+        <div class="card shadow">
+            <div class="card-header text-center bg-success text-white">
+                <h4><i class="fas fa-sign-in-alt me-2"></i><span data-translate="login">Login</span></h4>
+            </div>
+            <div class="card-body">
+                <form method="POST">
+                    <div class="mb-3">
+                        <label for="phone_number" class="form-label" data-translate="phoneNumber">Phone Number</label>
+                        <input type="tel" class="form-control" id="phone_number" name="phone_number" required 
+                               data-translate="phonePlaceholder">
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="password" class="form-label" data-translate="password">Password</label>
+                        <input type="password" class="form-control" id="password" name="password" required 
+                               data-translate="passwordPlaceholder">
+                    </div>
+                    
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-success btn-lg">
+                            <i class="fas fa-sign-in-alt me-2"></i><span data-translate="loginButton">Login</span>
+                        </button>
+                    </div>
+                </form>
+                
+                <div class="text-center mt-3">
+                    <p data-translate="noAccount">Don't have an account? <a href="{{ url_for('signup') }}" data-translate="signupLink">Sign up here</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Add login specific translations
+    const loginTranslations = {
+        en: {
+            login: "Login",
+            phoneNumber: "Phone Number",
+            phonePlaceholder: "Enter your phone number",
+            password: "Password",
+            passwordPlaceholder: "Enter your password",
+            loginButton: "Login",
+            noAccount: "Don't have an account?",
+            signupLink: "Sign up here"
+        },
+        ml: {
+            login: "ലോഗിൻ",
+            phoneNumber: "ഫോൺ നമ്പർ",
+            phonePlaceholder: "നിങ്ങളുടെ ഫോൺ നമ്പർ നൽകുക",
+            password: "പാസ്‌വേഡ്",
+            passwordPlaceholder: "നിങ്ങളുടെ പാസ്‌വേഡ് നൽകുക",
+            loginButton: "ലോഗിൻ",
+            noAccount: "അക്കൗണ്ട് ഇല്ലേ?",
+            signupLink: "ഇവിടെ സൈൻ അപ്പ് ചെയ്യുക"
+        },
+        hi: {
+            login: "लॉगिन",
+            phoneNumber: "फोन नंबर",
+            phonePlaceholder: "अपना फोन नंबर दर्ज करें",
+            password: "पासवर्ड",
+            passwordPlaceholder: "अपना पासवर्ड दर्ज करें",
+            loginButton: "लॉगिन",
+            noAccount: "खाता नहीं है?",
+            signupLink: "यहां साइन अप करें"
+        },
+        ta: {
+            login: "உள்நுழைய",
+            phoneNumber: "தொலைபேசி எண்",
+            phonePlaceholder: "உங்கள் தொலைபேசி எண்ணை உள்ளிடவும்",
+            password: "கடவுச்சொல்",
+            passwordPlaceholder: "உங்கள் கடவுச்சொல்லை உள்ளிடவும்",
+            loginButton: "உள்நுழைய",
+            noAccount: "கணக்கு இல்லையா?",
+            signupLink: "இங்கே பதிவு செய்யவும்"
+        },
+        te: {
+            login: "లాగిన్",
+            phoneNumber: "ఫోన్ నంబర్",
+            phonePlaceholder: "మీ ఫోన్ నంబర్‌ని నమోదు చేయండి",
+            password: "పాస్‌వర్డ్",
+            passwordPlaceholder: "మీ పాస్‌వర్డ్‌ని నమోదు చేయండి",
+            loginButton: "లాగిన్",
+            noAccount: "ఖాతా లేదా?",
+            signupLink: "ఇక్కడ సైన్ అప్ చేయండి"
+        },
+        kn: {
+            login: "ಲಾಗಿನ್",
+            phoneNumber: "ಫೋನ್ ನಂಬರ್",
+            phonePlaceholder: "ನಿಮ್ಮ ಫೋನ್ ನಂಬರ್ ನಮೂದು ಮಾಡಿ",
+            password: "ಪಾಸ್ವರ್ಡ್",
+            passwordPlaceholder: "ನಿಮ್ಮ ಪಾಸ್ವರ್ಡ್ ನಮೂದು ಮಾಡಿ",
+            loginButton: "ಲಾಗಿನ್",
+            noAccount: "ಖಾತೆ ಇಲ್ಲವೇ?",
+            signupLink: "ಇಲ್ಲಿ ಸೈನ್ ಅಪ್ ಮಾಡಿ"
+        }
+    };
+
+    // Merge login translations with base translations
+    document.addEventListener('DOMContentLoaded', function() {
+        // Wait for base translations to load
+        setTimeout(function() {
+            if (typeof translations !== 'undefined') {
+                // Merge translations
+                for (const lang in loginTranslations) {
+                    if (translations[lang]) {
+                        translations[lang] = {...translations[lang], ...loginTranslations[lang]};
+                    } else {
+                        translations[lang] = loginTranslations[lang];
+                    }
+                }
+                
+                // Apply translations if language is already set
+                if (typeof currentLanguage !== 'undefined') {
+                    document.querySelectorAll('[data-translate]').forEach(function(element) {
+                        const key = element.getAttribute('data-translate');
+                        if (translations[currentLanguage] && translations[currentLanguage][key]) {
+                            if (element.tagName === 'INPUT') {
+                                element.placeholder = translations[currentLanguage][key];
+                            } else {
+                                element.textContent = translations[currentLanguage][key];
+                            }
+                        }
+                    });
+                }
+            }
+        }, 100);
+    });
+</script>
+{% endblock %}

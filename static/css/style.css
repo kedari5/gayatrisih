@@ -1,0 +1,54 @@
+/* Custom CSS for Krishi Sakhi */
+body {
+    background-color: #f8f9fa;
+}
+
+.hero-section {
+    background: linear-gradient(135deg, #28a745, #20c997);
+}
+
+.card {
+    border: none;
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+    transition: box-shadow 0.15s ease-in-out;
+}
+
+.card:hover {
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+}
+
+.navbar-brand {
+    font-weight: bold;
+    font-size: 1.5rem;
+}
+
+.chat-container {
+    max-height: 500px;
+    overflow-y: auto;
+}
+
+.weather-widget {
+    background: linear-gradient(135deg, #17a2b8, #6f42c1);
+}
+
+.market-trend-up {
+    color: #28a745;
+}
+
+.market-trend-down {
+    color: #dc3545;
+}
+
+.market-trend-stable {
+    color: #ffc107;
+}
+
+@media (max-width: 768px) {
+    .navbar-brand {
+        font-size: 1.25rem;
+    }
+    
+    .hero-section h1 {
+        font-size: 2rem;
+    }
+}

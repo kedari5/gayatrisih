@@ -1,0 +1,287 @@
+{% extends "base.html" %}
+
+{% block title %}Welcome to Krishi Sakhi{% endblock %}
+
+{% block content %}
+<div class="hero-section text-center py-5 bg-success text-white rounded mb-4">
+    <div class="container">
+        <h1 class="display-4 mb-3">
+            <i class="fas fa-seedling me-3"></i>
+            <span data-translate="appName">Krishi Sakhi</span>
+        </h1>
+        <p class="lead mb-4" data-translate="appTagline">Your AI-Powered Personal Farming Assistant</p>
+        <p class="mb-4" data-translate="appDescription">Get personalized agricultural advice, weather updates, market prices, and farming guidance in your preferred language.</p>
+        <div class="d-flex justify-content-center gap-3">
+            <a href="{{ url_for('login') }}" class="btn btn-light btn-lg">
+                <i class="fas fa-sign-in-alt me-2"></i><span data-translate="login">Login</span>
+            </a>
+            <a href="{{ url_for('signup') }}" class="btn btn-outline-light btn-lg">
+                <i class="fas fa-user-plus me-2"></i><span data-translate="signup">Sign Up</span>
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-4 mb-4">
+        <div class="card h-100">
+            <div class="card-body text-center">
+                <i class="fas fa-robot fa-3x text-success mb-3"></i>
+                <h5 class="card-title" data-translate="aiAssistant">AI Chat Assistant</h5>
+                <p class="card-text" data-translate="aiAssistantDesc">Get instant answers to your farming questions with our AI-powered chat assistant that understands your local context.</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4 mb-4">
+        <div class="card h-100">
+            <div class="card-body text-center">
+                <i class="fas fa-cloud-sun fa-3x text-success mb-3"></i>
+                <h5 class="card-title" data-translate="weatherUpdates">Weather Updates</h5>
+                <p class="card-text" data-translate="weatherUpdatesDesc">Stay informed with real-time weather updates specific to your farming location and get weather-based farming advice.</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4 mb-4">
+        <div class="card h-100">
+            <div class="card-body text-center">
+                <i class="fas fa-chart-line fa-3x text-success mb-3"></i>
+                <h5 class="card-title" data-translate="marketPrices">Market Prices</h5>
+                <p class="card-text" data-translate="marketPricesDesc">Track agricultural commodity prices and market trends to make informed decisions about your crops.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-md-6 mb-4">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title"><i class="fas fa-globe me-2"></i><span data-translate="multilingualSupport">Multilingual Support</span></h5>
+                <p class="card-text" data-translate="multilingualSupportDesc">Access all features in your preferred language including English, Malayalam, Hindi, Tamil, Telugu, and Kannada.</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6 mb-4">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title"><i class="fas fa-microphone me-2"></i><span data-translate="voiceInteraction">Voice Interaction</span></h5>
+                <p class="card-text" data-translate="voiceInteractionDesc">Speak to your farming assistant and get voice responses - perfect for farmers working in the field.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Language Selection Section -->
+<div class="card mt-4">
+    <div class="card-header text-center">
+        <h5 data-translate="chooseLanguage">Choose Your Language</h5>
+    </div>
+    <div class="card-body">
+        <div class="row text-center">
+            <div class="col-md-2 col-4 mb-3">
+                <a href="#" class="language-change text-decoration-none" data-lang="en">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="fw-bold">English</div>
+                            <small>English</small>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            <div class="col-md-2 col-4 mb-3">
+                <a href="#" class="language-change text-decoration-none" data-lang="ml">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="fw-bold">മലയാളം</div>
+                            <small>Malayalam</small>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            <div class="col-md-2 col-4 mb-3">
+                <a href="#" class="language-change text-decoration-none" data-lang="hi">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="fw-bold">हिन्दी</div>
+                            <small>Hindi</small>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            <div class="col-md-2 col-4 mb-3">
+                <a href="#" class="language-change text-decoration-none" data-lang="ta">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="fw-bold">தமிழ்</div>
+                            <small>Tamil</small>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            <div class="col-md-2 col-4 mb-3">
+                <a href="#" class="language-change text-decoration-none" data-lang="te">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="fw-bold">తెలుగు</div>
+                            <small>Telugu</small>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            <div class="col-md-2 col-4 mb-3">
+                <a href="#" class="language-change text-decoration-none" data-lang="kn">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="fw-bold">ಕನ್ನಡ</div>
+                            <small>Kannada</small>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Add index page specific translations
+    const indexTranslations = {
+        en: {
+            appName: "Krishi Sakhi",
+            appTagline: "Your AI-Powered Personal Farming Assistant",
+            appDescription: "Get personalized agricultural advice, weather updates, market prices, and farming guidance in your preferred language.",
+            login: "Login",
+            signup: "Sign Up",
+            aiAssistant: "AI Chat Assistant",
+            aiAssistantDesc: "Get instant answers to your farming questions with our AI-powered chat assistant that understands your local context.",
+            weatherUpdates: "Weather Updates",
+            weatherUpdatesDesc: "Stay informed with real-time weather updates specific to your farming location and get weather-based farming advice.",
+            marketPrices: "Market Prices",
+            marketPricesDesc: "Track agricultural commodity prices and market trends to make informed decisions about your crops.",
+            multilingualSupport: "Multilingual Support",
+            multilingualSupportDesc: "Access all features in your preferred language including English, Malayalam, Hindi, Tamil, Telugu, and Kannada.",
+            voiceInteraction: "Voice Interaction",
+            voiceInteractionDesc: "Speak to your farming assistant and get voice responses - perfect for farmers working in the field.",
+            chooseLanguage: "Choose Your Language"
+        },
+        ml: {
+            appName: "കൃഷി സഖി",
+            appTagline: "നിങ്ങളുടെ AI-പവർഡ് വ്യക്തിഗത ഫാമിംഗ് അസിസ്റ്റന്റ്",
+            appDescription: "വ്യക്തിഗത കൃഷി ഉപദേശം, കാലാവസ്ഥ അപ്ഡേറ്റുകൾ, മാർക്കറ്റ് വിലകൾ, നിങ്ങൾക്കിഷ്ടമുള്ള ഭാഷയിൽ ഫാമിംഗ് മാർഗനിർദേശം എന്നിവ നേടുക.",
+            login: "ലോഗിൻ",
+            signup: "സൈൻ അപ്പ്",
+            aiAssistant: "AI ചാറ്റ് അസിസ്റ്റന്റ്",
+            aiAssistantDesc: "നിങ്ങളുടെ പ്രാദേശിക സന്ദർഭം മനസ്സിലാക്കുന്ന ഞങ്ങളുടെ AI-പവർഡ് ചാറ്റ് അസിസ്റ്റന്റ് ഉപയോഗിച്ച് നിങ്ങളുടെ കൃഷി ചോദ്യങ്ങൾക്ക് തൽക്ഷണം ഉത്തരങ്ങൾ നേടുക.",
+            weatherUpdates: "കാലാവസ്ഥ അപ്ഡേറ്റുകൾ",
+            weatherUpdatesDesc: "നിങ്ങളുടെ ഫാമിംഗ് സ്ഥാനത്തിന് നിർദ്ദിഷ്ടമായ റിയൽ-ടൈം കാലാവസ്ഥ അപ്ഡേറ്റുകളിൽ വിവരങ്ങൾ നിലനിർത്തുക, കാലാവസ്ഥ അടിസ്ഥാനമാക്കിയുള്ള ഫാമിംഗ് ഉപദേശം നേടുക.",
+            marketPrices: "മാർക്കറ്റ് വിലകൾ",
+            marketPricesDesc: "കാർഷിക വിപണന വിലകളും മാർക്കറ്റ് പ്രവണതകളും ട്രാക്ക് ചെയ്ത് നിങ്ങളുടെ പയറുകളെക്കുറിച്ച് അറിവുള്ള തീരുമാനങ്ങൾ എടുക്കുക.",
+            multilingualSupport: "മൾട്ടിലിംഗ്വൽ പിന്തുണ",
+            multilingualSupportDesc: "ഇംഗ്ലീഷ്, മലയാളം, ഹിന്ദി, തമിഴ്, തെലുങ്ക്, കന്നഡ എന്നിവയുൾപ്പെടെ നിങ്ങൾക്കിഷ്ടമുള്ള ഭാഷയിൽ എല്ലാ സവിശേഷതകളും ആക്‌സസ് ചെയ്യുക.",
+            voiceInteraction: "വോയ്‌സ് ഇന്ററാക്ഷൻ",
+            voiceInteractionDesc: "നിങ്ങളുടെ ഫാമിംഗ് അസിസ്റ്റന്റുമായി സംസാരിക്കുക, വോയ്‌സ് പ്രതികരണങ്ങൾ നേടുക - ഫീൽഡിൽ പ്രവർത്തിക്കുന്ന കർഷകർക്ക് അനുയോജ്യം.",
+            chooseLanguage: "നിങ്ങളുടെ ഭാഷ തിരഞ്ഞെടുക്കുക"
+        },
+        hi: {
+            appName: "कृषि सखी",
+            appTagline: "आपका AI-संचालित व्यक्तिगत कृषि सहायक",
+            appDescription: "अपनी पसंदीदा भाषा में व्यक्तिगत कृषि सलाह, मौसम अपडेट, बाजार कीमतें और कृषि मार्गदर्शन प्राप्त करें।",
+            login: "लॉगिन",
+            signup: "साइन अप",
+            aiAssistant: "AI चैट सहायक",
+            aiAssistantDesc: "हमारे AI-संचालित चैट सहायक के साथ अपने कृषि प्रश्नों के तुरंत उत्तर प्राप्त करें जो आपके स्थानीय संदर्भ को समझता है।",
+            weatherUpdates: "मौसम अपडेट",
+            weatherUpdatesDesc: "अपने कृषि स्थान के लिए विशिष्ट वास्तविक समय के मौसम अपडेट से सूचित रहें और मौसम-आधारित कृषि सलाह प्राप्त करें।",
+            marketPrices: "बाजार कीमतें",
+            marketPricesDesc: "कृषि वस्तुओं की कीमतों और बाजार के रुझानों को ट्रैक करें और अपनी फसलों के बारे में सूचित निर्णय लें।",
+            multilingualSupport: "बहुभाषी समर्थन",
+            multilingualSupportDesc: "अंग्रेजी, मलयालम, हिंदी, तमिल, तेलुगु और कन्नड़ सहित अपनी पसंदीदा भाषा में सभी सुविधाओं तक पहुंचें।",
+            voiceInteraction: "आवाज इंटरैक्शन",
+            voiceInteractionDesc: "अपने कृषि सहायक से बात करें और आवाज प्रतिक्रियाएं प्राप्त करें - खेत में काम करने वाले किसानों के लिए आदर्श।",
+            chooseLanguage: "अपनी भाषा चुनें"
+        },
+        ta: {
+            appName: "கிரிஷி சகி",
+            appTagline: "உங்கள் AI-இயக்கும் தனிப்பட்ட விவசாய உதவியாளர்",
+            appDescription: "தனிப்பட்ட விவசாய ஆலோசனை, வானிலை புதுப்பிப்புகள், சந்தை விலைகள் மற்றும் விவசாய வழிகாட்டுதலை உங்களுக்கு விருப்பமான மொழியில் பெறவும்.",
+            login: "உள்நுழைய",
+            signup: "பதிவு செய்ய",
+            aiAssistant: "AI அரட்டை உதவியாளர்",
+            aiAssistantDesc: "உங்கள் உள்ளூர் சூழலைப் புரிந்துகொள்ளும் எங்கள் AI-இயக்கும் அரட்டை உதவியாளருடன் உங்கள் விவசாய கேள்விகளுக்கு உடனடி பதில்களைப் பெறுங்கள்.",
+            weatherUpdates: "வானிலை புதுப்பிப்புகள்",
+            weatherUpdatesDesc: "உங்கள் விவசாய இடத்திற்கு குறிப்பிட்ட நிகழ்நேர வானிலை புதுப்பிப்புகளுடன் தகவலறிந்திருங்கள் மற்றும் வானிலை-அடிப்படையிலான விவசாய ஆலோசனையைப் பெறுங்கள்.",
+            marketPrices: "சந்தை விலைகள்",
+            marketPricesDesc: "விவசாய பொருட்களின் விலைகள் மற்றும் சந்தை போக்குகளைக் கண்காணித்து உங்கள் பயிர்கள் குறித்து தகவலறிந்த முடிவுகளை எடுக்கவும்.",
+            multilingualSupport: "பல மொழி ஆதரவு",
+            multilingualSupportDesc: "ஆங்கிலம், மலையாளம், இந்தி, தமிழ், தெலுங்கு மற்றும் கன்னடம் உட்பட உங்களுக்கு விருப்பமான மொழியில் அனைத்து அம்சங்களையும் அணுகவும்.",
+            voiceInteraction: "குரல் தொடர்பு",
+            voiceInteractionDesc: "உங்கள் விவசாய உதவியாளருடன் பேசுங்கள் மற்றும் குரல் பதில்களைப் பெறுங்கள் - வயலில் பணிபுரியும் விவசாயிகளுக்கு சிறந்தது.",
+            chooseLanguage: "உங்கள் மொழியைத் தேர்ந்தெடுக்கவும்"
+        },
+        te: {
+            appName: "కృషి సఖి",
+            appTagline: "మీ AI-శక్తితో కూడిన వ్యక్తిగత వ్యవసాయ సహాయకుడు",
+            appDescription: "వ్యక్తిగతీకరించిన వ్యవసాయ సలహాలు, వాతావరణ నవీకరణలు, మార్కెట్ ధరలు మరియు వ్యవసాయ మార్గదర్శకత్వాన్ని మీకు ఇష్టమైన భాషలో పొందండి.",
+            login: "లాగిన్",
+            signup: "సైన్ అప్",
+            aiAssistant: "AI చాట్ అసిస్టెంట్",
+            aiAssistantDesc: "మీ స్థానిక సందర్భాన్ని అర్థం చేసుకునే మా AI-శక్తితో కూడిన చాట్ అసిస్టెంట్‌తో మీ వ్యవసాయ ప్రశ్నలకు తక్షణ సమాధానాలు పొందండి.",
+            weatherUpdates: "వాతావరణ నవీకరణలు",
+            weatherUpdatesDesc: "మీ వ్యవసాయ స్థానానికి నిర్దిష్టమైన రియల్-టైమ్ వాతావరణ నవీకరణలతో సమాచారం పొందండి మరియు వాతావరణ-ఆధారిత వ్యవసాయ సలహాలను పొందండి.",
+            marketPrices: "మార్కెట్ ధరలు",
+            marketPricesDesc: "కృషి వస్తువుల ధరలు మరియు మార్కెట్ ధోరణులను ట్రాక్ చేసి మీ పంటల గురించి సమాచారం నిర్ణయాలు తీసుకోండి.",
+            multilingualSupport: "బహుభాషా మద్దతు",
+            multilingualSupportDesc: "ఇంగ్లీష్, మలయాళం, హిందీ, తమిళం, తెలుగు మరియు కన్నడ సహా మీకు ఇష్టమైన భాషలో అన్ని లక్షణాలను యాక్సెస్ చేయండి.",
+            voiceInteraction: "వాయిస్ ఇంటరాక్షన్",
+            voiceInteractionDesc: "మీ వ్యవసాయ సహాయకుడితో మాట్లాడండి మరియు వాయిస్ ప్రతిస్పందనలను పొందండి - ఫీల్డ్‌లో పని చేసే రైతులకు సరైనది.",
+            chooseLanguage: "మీ భాషను ఎంచుకోండి"
+        },
+        kn: {
+            appName: "ಕೃಷಿ ಸಖಿ",
+            appTagline: "ನಿಮ್ಮ AI-ಶಕ್ತಿಯ ವೈಯಕ್ತಿಕ ಕೃಷಿ ಸಹಾಯಕ",
+            appDescription: "ವೈಯಕ್ತಿಕೃತ ಕೃಷಿ ಸಲಹೆ, ಹವಾಮಾನ ನವೀಕರಣಗಳು, ಮಾರುಕಟ್ಟೆ ಬೆಲೆಗಳು ಮತ್ತು ಕೃಷಿ ಮಾರ್ಗದರ್ಶನವನ್ನು ನಿಮ್ಮ ಆದ್ಯತೆಯ ಭಾಷೆಯಲ್ಲಿ ಪಡೆಯಿರಿ.",
+            login: "ಲಾಗಿನ್",
+            signup: "ಸೈನ್ ಅಪ್",
+            aiAssistant: "AI ಚಾಟ್ ಸಹಾಯಕ",
+            aiAssistantDesc: "ನಿಮ್ಮ ಸ್ಥಳೀಯ ಸನ್ನಿವೇಶವನ್ನು ಅರ್ಥಮಾಡಿಕೊಳ್ಳುವ ನಮ್ಮ AI-ಶಕ್ತಿಯ ಚಾಟ್ ಸಹಾಯಕದೊಂದಿಗೆ ನಿಮ್ಮ ಕೃಷಿ ಪ್ರಶ್ನೆಗಳಿಗೆ ತ್ವರಿತ ಉತ್ತರಗಳನ್ನು ಪಡೆಯಿರಿ.",
+            weatherUpdates: "ಹವಾಮಾನ ನವೀಕರಣಗಳು",
+            weatherUpdatesDesc: "ನಿಮ್ಮ ಕೃಷಿ ಸ್ಥಳಕ್ಕೆ ನಿರ್ದಿಷ್ಟವಾದ ರಿಯಲ್-ಟೈಮ್ ಹವಾಮಾನ ನವೀಕರಣಗಳೊಂದಿಗೆ ತಿಳಿಸುವುದನ್ನು ಮುಂದುವರಿಸಿ ಮತ್ತು ಹವಾಮಾನ-ಆಧಾರಿತ ಕೃಷಿ ಸಲಹೆಯನ್ನು ಪಡೆಯಿರಿ.",
+            marketPrices: "ಮಾರುಕಟ್ಟೆ ಬೆಲೆಗಳು",
+            marketPricesDesc: "ಕೃಷಿ ವಸ್ತುಗಳ ಬೆಲೆಗಳು ಮತ್ತು ಮಾರುಕಟ್ಟೆ ಪ್ರವೃತ್ತಿಗಳನ್ನು ಟ್ರ್ಯಾಕ್ ಮಾಡಿ ಮತ್ತು ನಿಮ್ಮ ಬೆಳೆಗಳ ಕುರಿತು ಸೂಚಿತ ನಿರ್ಧಾರಗಳನ್ನು ತೆಗೆದುಕೊಳ್ಳಿ.",
+            multilingualSupport: "ಬಹುಭಾಷಾ ಬೆಂಬಲ",
+            multilingualSupportDesc: "ಇಂಗ್ಲಿಷ್, ಮಲಯಾಳಂ, ಹಿಂದಿ, ತಮಿಳು, ತೆಲುಗು ಮತ್ತು ಕನ್ನಡ ಸೇರಿದಂತೆ ನಿಮ್ಮ ಆದ್ಯತೆಯ ಭಾಷೆಯಲ್ಲಿ ಎಲ್ಲಾ ವೈಶಿಷ್ಟ್ಯಗಳನ್ನು ಪ್ರವೇಶಿಸಿ.",
+            voiceInteraction: "ವಾಯ್ಸ್ ಇಂಟರ್ಯಾಕ್ಷನ್",
+            voiceInteractionDesc: "ನಿಮ್ಮ ಕೃಷಿ ಸಹಾಯಕರೊಂದಿಗೆ ಮಾತನಾಡಿ ಮತ್ತು ವಾಯ್ಸ್ ಪ್ರತಿಕ್ರಿಯೆಗಳನ್ನು ಪಡೆಯಿರಿ - ಕ್ಷೇತ್ರದಲ್ಲಿ ಕೆಲಸ ಮಾಡುವ ರೈತರಿಗೆ ಸೂಕ್ತವಾಗಿದೆ.",
+            chooseLanguage: "ನಿಮ್ಮ ಭಾಷೆಯನ್ನು ಆರಿಸಿ"
+        }
+    };
+
+    // Merge index translations with base translations
+    document.addEventListener('DOMContentLoaded', function() {
+        // Wait for base translations to load
+        setTimeout(function() {
+            if (typeof translations !== 'undefined') {
+                // Merge translations
+                for (const lang in indexTranslations) {
+                    if (translations[lang]) {
+                        translations[lang] = {...translations[lang], ...indexTranslations[lang]};
+                    } else {
+                        translations[lang] = indexTranslations[lang];
+                    }
+                }
+                
+                // Apply translations if language is already set
+                if (typeof currentLanguage !== 'undefined') {
+                    document.querySelectorAll('[data-translate]').forEach(function(element) {
+                        const key = element.getAttribute('data-translate');
+                        if (translations[currentLanguage] && translations[currentLanguage][key]) {
+                            element.textContent = translations[currentLanguage][key];
+                        }
+                    });
+                }
+            }
+        }, 100);
+    });
+</script>
+{% endblock %}

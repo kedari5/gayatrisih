@@ -1,0 +1,306 @@
+{% extends "base.html" %}
+
+{% block title %}Farmer Profile - Krishi Sakhi{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2 data-translate="farmerProfile">Farmer Profile</h2>
+    <!-- Changed action to use 'profile' instead of 'update_profile' -->
+    <form method="POST" action="{{ url_for('profile') }}">
+        <div class="mb-3">
+            <label class="form-label" data-translate="name">Name</label>
+            <input type="text" name="name" class="form-control" 
+                   value="{{ current_user.farmer_profile.name if current_user.farmer_profile else '' }}" 
+                   required data-translate="namePlaceholder">
+        </div>
+        <div class="mb-3">
+            <label class="form-label" data-translate="location">Location</label>
+            <input type="text" name="location" class="form-control" 
+                   value="{{ current_user.farmer_profile.location if current_user.farmer_profile else '' }}" 
+                   required data-translate="locationPlaceholder">
+        </div>
+        <div class="mb-3">
+            <label class="form-label" data-translate="landSize">Land Size (acres)</label>
+            <input type="number" name="land_size" class="form-control" 
+                   value="{{ current_user.farmer_profile.land_size if current_user.farmer_profile else '' }}"
+                   data-translate="landSizePlaceholder">
+        </div>
+        <div class="mb-3">
+            <label class="form-label" data-translate="cropType">Crop Type</label>
+            <select name="crop_type" class="form-control">
+                <option value="" data-translate="selectCrop">Select Crop Type</option>
+                <option value="rice" {% if current_user.farmer_profile and current_user.farmer_profile.crop_type == 'rice' %}selected{% endif %} data-translate="rice">Rice</option>
+                <option value="wheat" {% if current_user.farmer_profile and current_user.farmer_profile.crop_type == 'wheat' %}selected{% endif %} data-translate="wheat">Wheat</option>
+                <option value="sugarcane" {% if current_user.farmer_profile and current_user.farmer_profile.crop_type == 'sugarcane' %}selected{% endif %} data-translate="sugarcane">Sugarcane</option>
+                <option value="cotton" {% if current_user.farmer_profile and current_user.farmer_profile.crop_type == 'cotton' %}selected{% endif %} data-translate="cotton">Cotton</option>
+                <option value="vegetables" {% if current_user.farmer_profile and current_user.farmer_profile.crop_type == 'vegetables' %}selected{% endif %} data-translate="vegetables">Vegetables</option>
+                <option value="fruits" {% if current_user.farmer_profile and current_user.farmer_profile.crop_type == 'fruits' %}selected{% endif %} data-translate="fruits">Fruits</option>
+                <option value="pulses" {% if current_user.farmer_profile and current_user.farmer_profile.crop_type == 'pulses' %}selected{% endif %} data-translate="pulses">Pulses</option>
+                <option value="oilseeds" {% if current_user.farmer_profile and current_user.farmer_profile.crop_type == 'oilseeds' %}selected{% endif %} data-translate="oilseeds">Oilseeds</option>
+                <option value="other" {% if current_user.farmer_profile and current_user.farmer_profile.crop_type == 'other' %}selected{% endif %} data-translate="other">Other</option>
+            </select>
+        </div>
+        <div class="mb-3">
+            <label class="form-label" data-translate="soilType">Soil Type</label>
+            <select name="soil_type" class="form-control">
+                <option value="" data-translate="selectSoil">Select Soil Type</option>
+                <option value="clay" {% if current_user.farmer_profile and current_user.farmer_profile.soil_type == 'clay' %}selected{% endif %} data-translate="clay">Clay</option>
+                <option value="sandy" {% if current_user.farmer_profile and current_user.farmer_profile.soil_type == 'sandy' %}selected{% endif %} data-translate="sandy">Sandy</option>
+                <option value="loamy" {% if current_user.farmer_profile and current_user.farmer_profile.soil_type == 'loamy' %}selected{% endif %} data-translate="loamy">Loamy</option>
+                <option value="silt" {% if current_user.farmer_profile and current_user.farmer_profile.soil_type == 'silt' %}selected{% endif %} data-translate="silt">Silt</option>
+                <option value="peaty" {% if current_user.farmer_profile and current_user.farmer_profile.soil_type == 'peaty' %}selected{% endif %} data-translate="peaty">Peaty</option>
+                <option value="chalky" {% if current_user.farmer_profile and current_user.farmer_profile.soil_type == 'chalky' %}selected{% endif %} data-translate="chalky">Chalky</option>
+                <option value="other" {% if current_user.farmer_profile and current_user.farmer_profile.soil_type == 'other' %}selected{% endif %} data-translate="other">Other</option>
+            </select>
+        </div>
+        <div class="mb-3">
+            <label class="form-label" data-translate="irrigationType">Irrigation Type</label>
+            <select name="irrigation_type" class="form-control">
+                <option value="" data-translate="selectIrrigation">Select Irrigation Type</option>
+                <option value="drip" {% if current_user.farmer_profile and current_user.farmer_profile.irrigation_type == 'drip' %}selected{% endif %} data-translate="drip">Drip Irrigation</option>
+                <option value="sprinkler" {% if current_user.farmer_profile and current_user.farmer_profile.irrigation_type == 'sprinkler' %}selected{% endif %} data-translate="sprinkler">Sprinkler Irrigation</option>
+                <option value="flood" {% if current_user.farmer_profile and current_user.farmer_profile.irrigation_type == 'flood' %}selected{% endif %} data-translate="flood">Flood Irrigation</option>
+                <option value="canal" {% if current_user.farmer_profile and current_user.farmer_profile.irrigation_type == 'canal' %}selected{% endif %} data-translate="canal">Canal Irrigation</option>
+                <option value="rainfed" {% if current_user.farmer_profile and current_user.farmer_profile.irrigation_type == 'rainfed' %}selected{% endif %} data-translate="rainfed">Rainfed</option>
+                <option value="other" {% if current_user.farmer_profile and current_user.farmer_profile.irrigation_type == 'other' %}selected{% endif %} data-translate="other">Other</option>
+            </select>
+        </div>
+        <div class="mb-3">
+            <label class="form-label" data-translate="experienceYears">Experience Years</label>
+            <input type="number" name="experience_years" class="form-control" 
+                   value="{{ current_user.farmer_profile.experience_years if current_user.farmer_profile else '' }}"
+                   min="0" max="80" data-translate="experiencePlaceholder">
+        </div>
+        <button type="submit" class="btn btn-success" data-translate="updateProfile">Update Profile</button>
+    </form>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Add profile specific translations
+    const profileTranslations = {
+        en: {
+            farmerProfile: "Farmer Profile",
+            name: "Name",
+            namePlaceholder: "Enter your full name",
+            location: "Location",
+            locationPlaceholder: "Enter your farm location",
+            landSize: "Land Size (acres)",
+            landSizePlaceholder: "Enter land size in acres",
+            cropType: "Crop Type",
+            selectCrop: "Select Crop Type",
+            rice: "Rice",
+            wheat: "Wheat",
+            sugarcane: "Sugarcane",
+            cotton: "Cotton",
+            vegetables: "Vegetables",
+            fruits: "Fruits",
+            pulses: "Pulses",
+            oilseeds: "Oilseeds",
+            other: "Other",
+            soilType: "Soil Type",
+            selectSoil: "Select Soil Type",
+            clay: "Clay",
+            sandy: "Sandy",
+            loamy: "Loamy",
+            silt: "Silt",
+            peaty: "Peaty",
+            chalky: "Chalky",
+            irrigationType: "Irrigation Type",
+            selectIrrigation: "Select Irrigation Type",
+            drip: "Drip Irrigation",
+            sprinkler: "Sprinkler Irrigation",
+            flood: "Flood Irrigation",
+            canal: "Canal Irrigation",
+            rainfed: "Rainfed",
+            experienceYears: "Experience Years",
+            experiencePlaceholder: "Years of farming experience",
+            updateProfile: "Update Profile"
+        },
+        ml: {
+            farmerProfile: "കർഷക പ്രൊഫൈൽ",
+            name: "പേര്",
+            namePlaceholder: "നിങ്ങളുടെ പൂർണ്ണ നാമം നൽകുക",
+            location: "സ്ഥാനം",
+            locationPlaceholder: "നിങ്ങളുടെ ഫാം സ്ഥാനം നൽകുക",
+            landSize: "നിലം വലുപ്പം (ഏക്കർ)",
+            landSizePlaceholder: "ഏക്കറിൽ നിലം വലുപ്പം നൽകുക",
+            cropType: "പയർ തരം",
+            selectCrop: "പയർ തരം തിരഞ്ഞെടുക്കുക",
+            rice: "അരി",
+            wheat: "ഗോതമ്പ്",
+            sugarcane: "കരിമ്പ്",
+            cotton: "പരുത്തി",
+            vegetables: "പച്ചക്കറികൾ",
+            fruits: "പഴങ്ങൾ",
+            pulses: "പയറുവർഗ്ഗങ്ങൾ",
+            oilseeds: "എണ്ണക്കുരു",
+            other: "മറ്റുള്ളവ",
+            soilType: "മണ്ണ് തരം",
+            selectSoil: "മണ്ണ് തരം തിരഞ്ഞെടുക്കുക",
+            clay: "കളിമണ്ണ്",
+            sandy: "മണൽ മണ്ണ്",
+            loamy: "എക്കൽ മണ്ണ്",
+            silt: "ചേറ് മണ്ണ്",
+            peaty: "പീറ്റ് മണ്ണ്",
+            chalky: "ചോക്ക് മണ്ണ്",
+            irrigationType: "ജലസേചന തരം",
+            selectIrrigation: "ജലസേചന തരം തിരഞ്ഞെടുക്കുക",
+            drip: "ഡ്രിപ്പ് ജലസേചനം",
+            sprinkler: "സ്പ്രിങ്ക്ലർ ജലസേചനം",
+            flood: "വെള്ളപ്പൊക്ക ജലസേചനം",
+            canal: "കനാൽ ജലസേചനം",
+            rainfed: "മഴ നീരാവി",
+            experienceYears: "പരിചയ വർഷങ്ങൾ",
+            experiencePlaceholder: "കൃഷി പரിചയത്തിന്റെ വർഷങ്ങൾ",
+            updateProfile: "പ്രൊഫൈൽ അപ്ഡേറ്റ് ചെയ്യുക"
+        },
+        hi: {
+            farmerProfile: "किसान प्रोफाइल",
+            name: "नाम",
+            namePlaceholder: "अपना पूरा नाम दर्ज करें",
+            location: "स्थान",
+            locationPlaceholder: "अपना फार्म स्थान दर्ज करें",
+            landSize: "जमीन का आकार (एकड़)",
+            landSizePlaceholder: "एकड़ में जमीन का आकार दर्ज करें",
+            cropType: "फसल प्रकार",
+            selectCrop: "फसल प्रकार चुनें",
+            rice: "चावल",
+            wheat: "गेहूं",
+            sugarcane: "गन्ना",
+            cotton: "कपास",
+            vegetables: "सब्जियां",
+            fruits: "फल",
+            pulses: "दालें",
+            oilseeds: "तिलहन",
+            other: "अन्य",
+            soilType: "मिट्टी का प्रकार",
+            selectSoil: "मिट्टी का प्रकार चुनें",
+            clay: "चिकनी मिट्टी",
+            sandy: "बलुई मिट्टी",
+            loamy: "दोमट मिट्टी",
+            silt: "गाद मिट्टी",
+            peaty: "पीट मिट्टी",
+            chalky: "चाक मिट्टी",
+            irrigationType: "सिंचाई प्रकार",
+            selectIrrigation: "सिंचाई प्रकार चुनें",
+            drip: "ड्रिप सिंचाई",
+            sprinkler: "स्प्रिंकलर सिंचाई",
+            flood: "बाढ़ सिंचाई",
+            canal: "नहर सिंचाई",
+            rainfed: "वर्षा आधारित",
+            experienceYears: "अनुभव वर्ष",
+            experiencePlaceholder: "कृषि अनुभव के वर्ष",
+            updateProfile: "प्रोफाइल अपडेट करें"
+        },
+        ta: {
+            farmerProfile: "விவசாயி சுயவிவரம்",
+            name: "பெயர்",
+            namePlaceholder: "உங்கள் முழு பெயரை உள்ளிடவும்",
+            location: "இடம்",
+            locationPlaceholder: "உங்கள் பண்ணை இடத்தை உள்ளிடவும்",
+            landSize: "நில அளவு (ஏக்கர்)",
+            landSizePlaceholder: "ஏக்கரில் நில அளவை உள்ளிடவும்",
+            cropType: "பயிர் வகை",
+            selectCrop: "பயிர் வகையைத் தேர்ந்தெடுக்கவும்",
+            rice: "அரிசி",
+            wheat: "கோதுமை",
+            sugarcane: "கரும்பு",
+            cotton: "பருத்தி",
+            vegetables: "காய்கறிகள்",
+            fruits: "பழங்கள்",
+            pulses: "பருப்பு வகைகள்",
+            oilseeds: "எண்ணெய் வித்துக்கள்",
+            other: "மற்றவை",
+            soilType: "மண் வகை",
+            selectSoil: "மண் வகையைத் தேர்ந்தெடுக்கவும்",
+            clay: "களிமண்",
+            sandy: "மணல் மண்",
+            loamy: "வண்டல் மண்",
+            silt: "எருவை மண்",
+            peaty: "பீட் மண்",
+            chalky: "சுண்ணாம்பு மண்",
+            irrigationType: "பாசன வகை",
+            selectIrrigation: "பாசன வகையைத் தேர்ந்தெடுக்கவும்",
+            drip: "டிரிப் பாசனம்",
+            sprinkler: "தெளிப்பான் பாசனம்",
+            flood: "வௌளப் பாசனம்",
+            canal: "கால்வாய் பாசனம்",
+            rainfed: "மழை நீர்ப்பாசனம்",
+            experienceYears: "அனுபவ ஆண்டுகள்",
+            experiencePlaceholder: "விவசாய அனுபவ ஆண்டுகள்",
+            updateProfile: "சுயவிவரத்தைப் புதுப்பிக்கவும்"
+        },
+        te: {
+            farmerProfile: "రైతు ప్రొఫైల్",
+            name: "పేరు",
+            namePlaceholder: "మీ పూర్తి పేరును నమోదు చేయండి",
+            location: "స్థానం",
+            locationPlaceholder: "మీ ఫార్మ్ స్థానాన్ని నమోదు చేయండి",
+            landSize: "భూమి పరిమాణం (ఎకరాలు)",
+            landSizePlaceholder: "ఎకరాలలో భూమి పరిమాణాన్ని నమోదు చేయండి",
+            cropType: "పంట రకం",
+            selectCrop: "పంట రకాన్ని ఎంచుకోండి",
+            rice: "వరి",
+            wheat: "గోధుమ",
+            sugarcane: "చెరకు",
+            cotton: "పత్తి",
+            vegetables: "కూరగాయలు",
+            fruits: "పండ్లు",
+            pulses: "పప్పులు",
+            oilseeds: "నూనెగింజలు",
+            other: "ఇతర",
+            soilType: "నేల రకం",
+            selectSoil: "నేల రకాన్ని ఎంచుకోండి",
+            clay: "జేడి నేల",
+            sandy: "ఇసుక నేల",
+            loamy: "దోమ నేల",
+            silt: "అవక్షేప నేల",
+            peaty: "పీట్ నేల",
+            chalky: "సున్నం நేల",
+            irrigationType: "నీటిపారుదల రకం",
+            selectIrrigation: "నీటిపారుదల రకాన్ని ఎంచుకోండి",
+            drip: "డ్రిప్ నీటిపారుదల",
+            sprinkler: "స్ప్రింక్లర్ నీటిపారుదల",
+            flood: "వరద నీటిపారుదల",
+            canal: "కాలువ నీటిపారుదల",
+            rainfed: "వర్షాధారం",
+            experienceYears: "అనుభవం సంవత్సరాలు",
+            experiencePlaceholder: "వ్యవసాయ అనుభవం సంవత్సరాలు",
+            updateProfile: "ప్రొఫైల్ నవీకరించండి"
+        }
+    };
+
+    // Merge profile translations with base translations
+    document.addEventListener('DOMContentLoaded', function() {
+        // Wait for base translations to load
+        setTimeout(function() {
+            if (typeof translations !== 'undefined') {
+                // Merge translations
+                for (const lang in profileTranslations) {
+                    if (translations[lang]) {
+                        translations[lang] = {...translations[lang], ...profileTranslations[lang]};
+                    } else {
+                        translations[lang] = profileTranslations[lang];
+                    }
+                }
+                
+                // Apply translations if language is already set
+                if (typeof currentLanguage !== 'undefined') {
+                    document.querySelectorAll('[data-translate]').forEach(function(element) {
+                        const key = element.getAttribute('data-translate');
+                        if (translations[currentLanguage] && translations[currentLanguage][key]) {
+                            if (element.tagName === 'INPUT' || element.tagName === 'SELECT') {
+                                element.placeholder = translations[currentLanguage][key];
+                            } else {
+                                element.textContent = translations[currentLanguage][key];
+                            }
+                        }
+                    });
+                }
+            }
+        }, 100);
+    });
+</script>
+{% endblock %}

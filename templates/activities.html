@@ -1,0 +1,297 @@
+{% extends "base.html" %}
+
+{% block title %}Farm Activities - Krishi Sakhi{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2 data-translate="farmActivities">Farm Activities</h2>
+    
+    <!-- Add Activity Form -->
+    <form method="POST" action="{{ url_for('add_activity') }}" class="mb-4">
+        <div class="mb-3">
+            <label class="form-label" data-translate="activityType">Activity Type</label>
+            <select name="activity_type" class="form-control" required>
+                <option value="sowing" data-translate="sowing">Sowing</option>
+                <option value="irrigation" data-translate="irrigation">Irrigation</option>
+                <option value="fertilizer" data-translate="fertilizer">Fertilizer Application</option>
+                <option value="pest_control" data-translate="pestControl">Pest Control</option>
+                <option value="harvest" data-translate="harvest">Harvest</option>
+                <option value="pruning" data-translate="pruning">Pruning</option>
+                <option value="weeding" data-translate="weeding">Weeding</option>
+                <option value="soil_preparation" data-translate="soilPreparation">Soil Preparation</option>
+            </select>
+        </div>
+        <div class="mb-3">
+            <label class="form-label" data-translate="description">Description</label>
+            <div class="input-group">
+                <textarea name="description" id="description" class="form-control" required data-translate="descriptionPlaceholder" placeholder="Enter activity details..."></textarea>
+                <button type="button" id="speechToTextBtn" class="btn btn-outline-secondary">
+                    <i class="fas fa-microphone"></i>
+                </button>
+            </div>
+            <small class="form-text text-muted">
+                <span data-translate="clickMic">Click the microphone icon to speak your description</span>
+                <span id="speechStatus" class="ms-2"></span>
+            </small>
+        </div>
+        <div class="mb-3">
+            <label class="form-label" data-translate="date">Date</label>
+            <input type="date" name="date_recorded" class="form-control" required>
+        </div>
+        <button type="submit" class="btn btn-success" data-translate="logActivity">Log Activity</button>
+    </form>
+    
+    <!-- Activities List -->
+    <h4 data-translate="recentActivities">Recent Activities</h4>
+    <div class="activities-list">
+        {% if activities %}
+            {% for activity in activities %}
+            <div class="card mb-3">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h6 class="card-title mb-0">
+                            <span class="badge bg-primary me-2" data-translate="{{ activity.activity_type }}">
+                                {{ activity.activity_type.title().replace('_', ' ') }}
+                            </span>
+                        </h6>
+                        <small class="text-muted">{{ activity.date_recorded.strftime('%d %b %Y') }}</small>
+                    </div>
+                    <p class="card-text mt-2">{{ activity.description }}</p>
+                    <small class="text-muted" data-translate="loggedOn">Logged on: {{ activity.timestamp.strftime('%d %b %Y, %H:%M') }}</small>
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="alert alert-info" data-translate="noActivities">
+                No activities logged yet. Start by logging your first farm activity!
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Add activities specific translations
+    const activitiesTranslations = {
+        en: {
+            farmActivities: "Farm Activities",
+            activityType: "Activity Type",
+            sowing: "Sowing",
+            irrigation: "Irrigation",
+            fertilizer: "Fertilizer Application",
+            pestControl: "Pest Control",
+            harvest: "Harvest",
+            pruning: "Pruning",
+            weeding: "Weeding",
+            soilPreparation: "Soil Preparation",
+            description: "Description",
+            descriptionPlaceholder: "Enter activity details...",
+            date: "Date",
+            logActivity: "Log Activity",
+            recentActivities: "Recent Activities",
+            loggedOn: "Logged on:",
+            noActivities: "No activities logged yet. Start by logging your first farm activity!",
+            clickMic: "Click the microphone icon to speak your description",
+            listening: "Listening...",
+            saySomething: "Say something...",
+            notSupported: "Speech recognition is not supported in this browser"
+        },
+        ml: {
+            farmActivities: "ഫാം പ്രവർത്തനങ്ങൾ",
+            activityType: "പ്രവർത്തന തരം",
+            sowing: "വിതയ്ക്കൽ",
+            irrigation: "ജലസേചനം",
+            fertilizer: "വളപ്രയോഗം",
+            pestControl: "കീടനിയന്ത്രണം",
+            harvest: "വിളവെടുപ്പ്",
+            pruning: "കത്രിക്കൽ",
+            weeding: "കളനശീകരണം",
+            soilPreparation: "മണ്ണ് തയ്യാറാക്കൽ",
+            description: "വിവരണം",
+            descriptionPlaceholder: "പ്രവർത്തന വിശദാംശങ്ങൾ നൽകുക...",
+            date: "തീയതി",
+            logActivity: "പ്രവർത്തനം രേഖപ്പെടുത്തുക",
+            recentActivities: "അടുത്തിടെയുള്ള പ്രവർത്തനങ്ങൾ",
+            loggedOn: "രേഖപ്പെടുത്തിയത്:",
+            noActivities: "ഇതുവരെ രേഖപ്പെടുത്തിയ പ്രവർത്തനങ്ങളൊന്നുമില്ല. നിങ്ങളുടെ ആദ്യ ഫാം പ്രവർത്തനം രേഖപ്പെടുത്തി ആരംഭിക്കൂ!",
+            clickMic: "വിവരണം പറയാൻ മൈക്രോഫോൺ ഐക്കൺ ക്ലിക്ക് ചെയ്യുക",
+            listening: "കേൾക്കുന്നു...",
+            saySomething: "എന്തെങ്കിലും പറയുക...",
+            notSupported: "ഈ ബ്രൗസറിൽ സ്പീച്ച് റെക്കഗ്നിഷൻ പിന്തുണയ്ക്കുന്നില്ല"
+        },
+        hi: {
+            farmActivities: "फार्म गतिविधियाँ",
+            activityType: "गतिविधि प्रकार",
+            sowing: "बुआई",
+            irrigation: "सिंचाई",
+            fertilizer: "उर्वरक अनुप्रयोग",
+            pestControl: "कीट नियंत्रण",
+            harvest: "फसल कटाई",
+            pruning: "छंटाई",
+            weeding: "निराई",
+            soilPreparation: "मिट्टी की तैयारी",
+            description: "विवरण",
+            descriptionPlaceholder: "गतिविधि विवरण दर्ज करें...",
+            date: "तारीख",
+            logActivity: "गतिविधि लॉग करें",
+            recentActivities: "हाल की गतिविधियाँ",
+            loggedOn: "लॉग किया गया:",
+            noActivities: "अभी तक कोई गतिविधि लॉग नहीं की गई है। अपनी पहली फार्म गतिविधि लॉग करके शुरुआत करें!",
+            clickMic: "अपना विवरण बोलने के लिए माइक्रोफोन आइकन पर क्लिक करें",
+            listening: "सुन रहा हूँ...",
+            saySomething: "कुछ बोलें...",
+            notSupported: "यह ब्राउज़र स्पीच रिकग्निशन का समर्थन नहीं करता"
+        },
+        ta: {
+            farmActivities: "பண்ணை செயல்பாடுகள்",
+            activityType: "செயல்பாடு வகை",
+            sowing: "விதைத்தல்",
+            irrigation: "பாசனம்",
+            fertilizer: "உரம் பயன்பாடு",
+            pestControl: "பூச்சி கட்டுப்பாடு",
+            harvest: "அறுவடை",
+            pruning: "கத்தரித்தல்",
+            weeding: "களை அகற்றுதல்",
+            soilPreparation: "மண் தயாரிப்பு",
+            description: "விளக்கம்",
+            descriptionPlaceholder: "செயல்பாடு விவரங்களை உள்ளிடவும்...",
+            date: "தேதி",
+            logActivity: "செயல்பாட்டை பதிவு செய்யுங்கள்",
+            recentActivities: "சமீபத்திய செயல்பாடுகள்",
+            loggedOn: "பதிவு செய்யப்பட்டது:",
+            noActivities: "இதுவரை எந்த செயல்பாடுகளும் பதிவு செய்யப்படவில்லை. உங்கள் முதல் பண்ணை செயல்பாட்டை பதிவு செய்வதன் மூலம் தொடங்குங்கள்!",
+            clickMic: "உங்கள் விளக்கத்தைப் பேச மைக்ரோஃபோன் ஐகானைக் கிளிக் செய்யவும்",
+            listening: "கேட்கிறது...",
+            saySomething: "ஏதாவது சொல்லுங்கள்...",
+            notSupported: "இந்த உலாவியில் பேச்சு அங்கீகாரம் ஆதரிக்கப்படவில்லை"
+        },
+        te: {
+            farmActivities: "ఫార్మ్ కార్యకలాపాలు",
+            activityType: "కార్యకలాపం రకం",
+            sowing: "విత్తనం",
+            irrigation: "నీటిపారుదల",
+            fertilizer: "ఎరువు అప్లికేషన్",
+            pestControl: "కీటక నియంత్రణ",
+            harvest: "పంట",
+            pruning: "కత్తిరించడం",
+            weeding: "కలుపు తొలగించడం",
+            soilPreparation: "నేల తయారీ",
+            description: "వివరణ",
+            descriptionPlaceholder: "కార్యకలాప వివరాలను నమోదు చేయండి...",
+            date: "తేదీ",
+            logActivity: "కార్యకలాపాన్ని లాగ్ చేయండి",
+            recentActivities: "ఇటీవలి కార్యకలాపాలు",
+            loggedOn: "లాగ్ చేయబడింది:",
+            noActivities: "ఇంతవరకు ఎటువంటి కార్యకలాపాలు లాగ్ చేయబడలేదు. మీ మొదటి ఫార్మ్ కార్యకలాపాన్ని లాగ్ చేయడం ద్వారా ప్రారంభించండి!",
+            clickMic: "మీ వివరణను మాట్లాడడానికి మైక్రోఫోన్ చిహ్నంపై క్లిక్ చేయండి",
+            listening: "వింటున్నాను...",
+            saySomething: "ఏదో చెప్పండి...",
+            notSupported: "ఈ బ్రౌజర్‌లో స్పీచ్ రికగ్నిషన్‌కు మద్దతు లేదు"
+        }
+    };
+
+    // Merge activities translations with base translations
+    document.addEventListener('DOMContentLoaded', function() {
+        // Wait for base translations to load
+        setTimeout(function() {
+            if (typeof translations !== 'undefined') {
+                // Merge translations
+                for (const lang in activitiesTranslations) {
+                    if (translations[lang]) {
+                        translations[lang] = {...translations[lang], ...activitiesTranslations[lang]};
+                    } else {
+                        translations[lang] = activitiesTranslations[lang];
+                    }
+                }
+                
+                // Apply translations if language is already set
+                if (typeof currentLanguage !== 'undefined') {
+                    document.querySelectorAll('[data-translate]').forEach(function(element) {
+                        const key = element.getAttribute('data-translate');
+                        if (translations[currentLanguage] && translations[currentLanguage][key]) {
+                            if (element.tagName === 'TEXTAREA' || element.tagName === 'INPUT') {
+                                element.placeholder = translations[currentLanguage][key];
+                            } else {
+                                element.textContent = translations[currentLanguage][key];
+                            }
+                        }
+                    });
+                }
+            }
+        }, 100);
+        
+        // Speech to text functionality
+        const speechToTextBtn = document.getElementById('speechToTextBtn');
+        const descriptionTextarea = document.getElementById('description');
+        const speechStatus = document.getElementById('speechStatus');
+        
+        // Check if the browser supports speech recognition
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        
+        if (!SpeechRecognition) {
+            speechToTextBtn.disabled = true;
+            speechStatus.textContent = translations[currentLanguage]?.notSupported || "Speech recognition is not supported in this browser";
+            return;
+        }
+        
+        const recognition = new SpeechRecognition();
+        recognition.continuous = false;
+        recognition.interimResults = true;
+        recognition.lang = currentLanguage || 'en-US';
+        
+        let isListening = false;
+        
+        speechToTextBtn.addEventListener('click', () => {
+            if (isListening) {
+                recognition.stop();
+                speechToTextBtn.classList.remove('btn-danger');
+                speechToTextBtn.classList.add('btn-outline-secondary');
+                speechStatus.textContent = '';
+            } else {
+                recognition.start();
+                speechToTextBtn.classList.remove('btn-outline-secondary');
+                speechToTextBtn.classList.add('btn-danger');
+                speechStatus.textContent = translations[currentLanguage]?.listening || "Listening...";
+            }
+        });
+        
+        recognition.onstart = () => {
+            isListening = true;
+        };
+        
+        recognition.onend = () => {
+            isListening = false;
+            speechToTextBtn.classList.remove('btn-danger');
+            speechToTextBtn.classList.add('btn-outline-secondary');
+            speechStatus.textContent = '';
+        };
+        
+        recognition.onresult = (event) => {
+            let transcript = '';
+            for (let i = event.resultIndex; i < event.results.length; i++) {
+                if (event.results[i].isFinal) {
+                    transcript += event.results[i][0].transcript;
+                } else {
+                    transcript += event.results[i][0].transcript;
+                }
+            }
+            
+            // Append the transcript to the textarea
+            if (descriptionTextarea.value) {
+                descriptionTextarea.value += ' ' + transcript;
+            } else {
+                descriptionTextarea.value = transcript;
+            }
+        };
+        
+        recognition.onerror = (event) => {
+            console.error('Speech recognition error', event.error);
+            speechStatus.textContent = `Error: ${event.error}`;
+        };
+    });
+</script>
+
+<!-- Add Font Awesome for microphone icon -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+{% endblock %}

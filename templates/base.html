@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="{{ get_locale() }}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Krishi Sakhi - AI Farming Assistant{% endblock %}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">
+    <style>
+        .language-notification {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1050;
+            min-width: 250px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+    </style>
+</head>
+<body>
+    <!-- Hidden element to pass authentication data to JavaScript -->
+    <div id="auth-status" 
+         data-authenticated="{% if current_user.is_authenticated %}true{% else %}false{% endif %}" 
+         data-user-language="{{ current_user.language_preference if current_user.is_authenticated else 'en' }}"
+         style="display: none;">
+    </div>
+    
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-success">
+        <div class="container">
+            <a class="navbar-brand" href="{{ url_for('dashboard') if current_user.is_authenticated else url_for('index') }}">
+                <i class="fas fa-seedling me-2"></i>Krishi Sakhi
+            </a>
+            
+            {% if current_user.is_authenticated %}
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('dashboard') }}"><i class="fas fa-home me-1"></i><span data-translate="dashboard">Dashboard</span></a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('chat') }}"><i class="fas fa-comments me-1"></i><span data-translate="chat">Chat Assistant</span></a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('weather') }}"><i class="fas fa-cloud-sun me-1"></i><span data-translate="weather">Weather</span></a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('market_prices') }}"><i class="fas fa-chart-line me-1"></i><span data-translate="market">Market Prices</span></a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('activities') }}"><i class="fas fa-clipboard-list me-1"></i><span data-translate="activities">Activities</span></a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('profile') }}"><i class="fas fa-user me-1"></i><span data-translate="profile">Profile</span></a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                            <i class="fas fa-globe me-1"></i><span data-translate="language">Language</span>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item language-change" href="#" data-lang="en">English</a></li>
+                            <li><a class="dropdown-item language-change" href="#" data-lang="ml">മലയാളം</a></li>
+                            <li><a class="dropdown-item language-change" href="#" data-lang="hi">हिन्दी</a></li>
+                            <li><a class="dropdown-item language-change" href="#" data-lang="ta">தமிழ்</a></li>
+                            <li><a class="dropdown-item language-change" href="#" data-lang="te">తెలుగు</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('logout') }}"><i class="fas fa-sign-out-alt me-1"></i><span data-translate="logout">Logout</span></a>
+                    </li>
+                </ul>
+            </div>
+            {% endif %}
+        </div>
+    </nav>
+
+    <!-- Flash Messages -->
+    <div class="container mt-3">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                <div class="alert alert-{{ 'danger' if category == 'error' else category }} alert-dismissible fade show">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+    </div>
+
+    <!-- Main Content -->
+    <div class="container mt-4">
+        {% block content %}{% endblock %}
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-light text-center text-muted py-3 mt-5">
+        <div class="container">
+            <p>&copy; 2025 Krishi Sakhi - <span data-translate="footer">Your Digital Farming Companion</span></p>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+    
+    <!-- Language Translation Script -->
+    <script>
+        // Language translation data
+        const translations = {
+            en: {
+                dashboard: "Dashboard",
+                chat: "Chat Assistant",
+                weather: "Weather",
+                market: "Market Prices",
+                activities: "Activities",
+                profile: "Profile",
+                language: "Language",
+                logout: "Logout",
+                footer: "Your Digital Farming Companion"
+            },
+            ml: {
+                dashboard: "ഡാഷ്ബോർഡ്",
+                chat: "ചാറ്റ് അസിസ്റ്റന്റ്",
+                weather: "കാലാവസ്ഥ",
+                market: "മാർക്കറ്റ് വിലകൾ",
+                activities: "പ്രവർത്തനങ്ങൾ",
+                profile: "പ്രൊഫൈൽ",
+                language: "ഭാഷ",
+                logout: "ലോഗൗട്ട്",
+                footer: "നിങ്ങളുടെ ഡിജിറ്റൽ ഫാമിംഗ് കമ്പാനിയൻ"
+            },
+            hi: {
+                dashboard: "डैशबोर्ड",
+                chat: "चैट सहायक",
+                weather: "मौसम",
+                market: "बाजार कीमतें",
+                activities: "गतिविधियाँ",
+                profile: "प्रोफाइल",
+                language: "भाषा",
+                logout: "लॉगआउट",
+                footer: "आपका डिजिटल फार्मिंग कम्पेनियन"
+            },
+            ta: {
+                dashboard: "டாஷ்போர்டு",
+                chat: "அரட்டை உதவியாளர்",
+                weather: "வானிலை",
+                market: "சந்தை விலைகள்",
+                activities: "நடவடிக்கைகள்",
+                profile: "சுயவிவரம்",
+                language: "மொழி",
+                logout: "வெளியேறு",
+                footer: "உங்கள் டிஜிட்டல் விவசாய துணை"
+            },
+            te: {
+                dashboard: "డాష్బోర్డ్",
+                chat: "చాట్ అసిస్టెంట్",
+                weather: "వాతావరణం",
+                market: "మార్కెట్ ధరలు",
+                activities: "చట్రవర్గాలు",
+                profile: "ప్రొఫైల్",
+                language: "భాష",
+                logout: "లాగ్అవుట్",
+                footer: "మీ డిజిటల్ ఫార్మింగ్ కంపానియన్"
+            }
+        };
+
+        // Set default language
+        let currentLanguage = 'en';
+        
+        // Get authentication status from data attribute
+        const authElement = document.getElementById('auth-status');
+        const isAuthenticated = authElement ? authElement.getAttribute('data-authenticated') === 'true' : false;
+        const userLanguage = authElement ? authElement.getAttribute('data-user-language') || 'en' : 'en';
+
+        // Function to change language
+        function changeLanguage(lang) {
+            currentLanguage = lang;
+            
+            // Update all elements with data-translate attribute
+            document.querySelectorAll('[data-translate]').forEach(function(element) {
+                const key = element.getAttribute('data-translate');
+                if (translations[lang] && translations[lang][key]) {
+                    element.textContent = translations[lang][key];
+                }
+            });
+            
+            // Send language preference to server if user is authenticated
+            if (isAuthenticated) {
+                fetch('/change_language/' + lang, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    }
+                }).then(function(response) {
+                    if (response.ok) {
+                        showNotification('Language changed successfully!');
+                    }
+                }).catch(function(error) {
+                    console.error('Error:', error);
+                });
+            } else {
+                // For non-authenticated users, store preference in sessionStorage
+                sessionStorage.setItem('preferredLanguage', lang);
+                showNotification('Language changed successfully!');
+            }
+        }
+
+        // Show notification
+        function showNotification(message) {
+            // Remove existing notification if any
+            const existingNotification = document.querySelector('.language-notification');
+            if (existingNotification) {
+                existingNotification.remove();
+            }
+            
+            // Create notification element
+            const notification = document.createElement('div');
+            notification.className = 'language-notification alert alert-success';
+            notification.style.cssText = 'position: fixed; bottom: 20px; right: 20px; z-index: 1050; min-width: 250px;';
+            notification.textContent = message;
+            
+            // Add to page
+            document.body.appendChild(notification);
+            
+            // Remove after 3 seconds
+            setTimeout(function() {
+                if (notification.parentNode) {
+                    notification.parentNode.removeChild(notification);
+                }
+            }, 3000);
+        }
+
+        // Initialize language on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            // Check for saved language preference for non-authenticated users
+            if (!isAuthenticated) {
+                const savedLanguage = sessionStorage.getItem('preferredLanguage');
+                if (savedLanguage && translations[savedLanguage]) {
+                    changeLanguage(savedLanguage);
+                }
+            } else {
+                // For authenticated users, use their saved preference
+                if (userLanguage && translations[userLanguage]) {
+                    changeLanguage(userLanguage);
+                }
+            }
+            
+            // Set up language change handlers
+            document.querySelectorAll('.language-change').forEach(function(element) {
+                element.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const lang = this.getAttribute('data-lang');
+                    if (translations[lang]) {
+                        changeLanguage(lang);
+                    }
+                });
+            });
+        });
+    </script>
+    
+    {% block scripts %}{% endblock %}
+</body>
+</html>
