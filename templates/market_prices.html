@@ -1,107 +1,106 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <div class="container mt-4">
-        <h2 class="mb-4 text-center">{{ gettext('Current Market Prices') }}</h2>
-        
-        <!-- Search Bar -->
-        <div class="mb-4">
-            <input type="text" class="form-control search-bar" id="searchBar" placeholder="{{ gettext('Search for a crop...') }}">
-        </div>
-
-        <!-- Crop Cards Grid -->
-        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4" id="crop-cards-container">
-            {% for price in market_prices %}
-            <div class="col crop-card-item">
-                <div class="card h-100 crop-card">
-                    <div class="card-body text-center">
-                        {% set icon_map = {
-                            'rice': 'fa-rice-bowl',
-                            'wheat': 'fa-wheat-awn',
-                            'sugarcane': 'fa-tree',
-                            'cotton': 'fa-seedling',
-                            'onion': 'fa-onion',
-                            'tomato': 'fa-tomato',
-                            'potato': 'fa-potato',
-                            'maize': 'fa-corn',
-                            'soybean': 'fa-seedling',
-                            'pulses': 'fa-seedling'
-                        } %}
-                        {% set crop_icon = icon_map.get(price['name'], 'fa-seedling') %}
-                        <i class="fas {{ crop_icon }} crop-icon mb-3"></i>
-                        <h5 class="card-title">{{ price['translated_name'] }}</h5>
-                        <p class="text-muted small">{{ price['market'] }}, {{ price['state'] }}</p>
-                        <p class="card-text">
-                            <span class="crop-price">₹{{ "%.2f"|format(price['price_modal']) }}</span>
-                            <span class="crop-unit">{{ price['unit'] }}</span>
-                        </p>
-                    </div>
-                </div>
+<div class="py-12">
+    <div class="text-center mb-12">
+        <h1 class="font-serif text-5xl text-forest mb-4">{{ gettext('Market Wisdom') }}</h1>
+        <p class="text-forest/60 max-w-xl mx-auto">{{ gettext('Real-time commodity prices from major mandis across India, updated daily for your prosperity.') }}</p>
+    </div>
+    
+    <!-- Search Bar -->
+    <div class="max-w-2xl mx-auto mb-16 px-6">
+        <div class="relative group">
+            <input type="text" class="w-full pl-14 pr-6 py-4 bg-white border border-forest/10 rounded-2xl focus:ring-4 focus:ring-forest/5 focus:border-forest outline-none transition-all shadow-sm group-hover:shadow-md" 
+                   id="searchBar" placeholder="{{ gettext('Search for a crop...') }}">
+            <div class="absolute left-5 top-1/2 -translate-y-1/2 text-forest/30 group-focus-within:text-forest transition-colors">
+                <i class="fas fa-search text-xl"></i>
             </div>
-            {% else %}
-            <div class="col-12 text-center">
-                <p>{{ gettext('Market price data is currently unavailable. Please try again later.') }}</p>
-            </div>
-            {% endfor %}
         </div>
     </div>
-{% endblock %}
 
-{% block scripts %}
+    <!-- Crop Cards Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-8 px-6" id="crop-cards-container">
+        {% for price in market_prices %}
+        <div class="crop-card-item group">
+            <div class="relative bg-white p-8 transition-all duration-500 hover:shadow-2xl overflow-hidden hover:-translate-y-2" 
+                 style="border-radius: 80px 10px 80px 10px; border-left: 10px solid #1B4332;">
+                <div class="flex items-center space-x-6 relative z-10">
+                    <!-- Crop Image -->
+                    <div class="h-24 w-24 shrink-0 overflow-hidden rounded-full border-4 border-cream bg-white shadow-inner transform transition-transform duration-700 group-hover:scale-110">
+                        {% set img_map = {
+                            'rice': 'https://images.unsplash.com/photo-1586201375761-83865001e31c?auto=format&fit=crop&w=300&q=80',
+                            'wheat': 'https://images.unsplash.com/photo-1574323347407-f5e1ad6d020b?auto=format&fit=crop&w=300&q=80',
+                            'sugarcane': 'https://images.unsplash.com/photo-1594911771101-fa08124f5933?auto=format&fit=crop&w=300&q=80',
+                            'cotton': 'https://images.unsplash.com/photo-1606144042614-b2417e99c4e3?auto=format&fit=crop&w=300&q=80',
+                            'onion': 'https://images.unsplash.com/photo-1508747703725-719777637510?auto=format&fit=crop&w=300&q=80',
+                            'tomato': 'https://images.unsplash.com/photo-1592924357228-91a4daadcfea?auto=format&fit=crop&w=300&q=80',
+                            'potato': 'https://images.unsplash.com/photo-1518977676601-b53f82aba655?auto=format&fit=crop&w=300&q=80',
+                            'maize': 'https://images.unsplash.com/photo-1551754655-cd27e38d2076?auto=format&fit=crop&w=300&q=80',
+                            'soybean': 'https://images.unsplash.com/photo-1594052010265-2766ec60df6a?auto=format&fit=crop&w=300&q=80'
+                        } %}
+                        <img src="{{ img_map.get(price['name'], 'https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=300&q=80') }}" 
+                             class="h-full w-full object-cover" alt="{{ price['translated_name'] }}">
+                    </div>
+                    
+                    <!-- Price Info -->
+                    <div class="flex-grow">
+                        <h3 class="font-serif text-2xl font-bold text-forest mb-1 transition-colors">{{ price['translated_name'] }}</h3>
+                        <div class="flex items-center text-forest/40 text-xs mb-3 font-medium uppercase tracking-wider">
+                            <i class="fas fa-location-dot me-2"></i>
+                            <span>{{ price['market'] }}, {{ price['state'] }}</span>
+                        </div>
+                        <div class="flex items-baseline space-x-1">
+                            <span class="text-3xl font-black text-forest">₹{{ "%.0f"|format(price['price_modal']) }}</span>
+                            <span class="text-xs font-bold text-forest/40">/ {{ price['unit'] }}</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Leaf Vein Pattern Background -->
+                <div class="absolute top-0 right-0 p-6 opacity-[0.03] group-hover:opacity-[0.08] transition-opacity duration-700">
+                    <svg width="120" height="120" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M17,8C8,10 5.9,16.17 3.82,21.34L5.71,22L6.66,19.7C7.14,19.87 7.64,20 8.17,20C14.17,20 19,15.17 19,9.17C19,8.78 18.97,8.4 18.91,8.03C18.4,8.19 17.79,8.23 17,8M12.91,15.36C12.33,16.13 11,17 9.17,17C7,17 7,15.17 9.17,15.17C11,15.17 12,14.67 12.91,15.36M14,12.5C12,12.5 12,11 14,11C16,11 16,12.5 14,12.5Z"/>
+                    </svg>
+                </div>
+            </div>
+        </div>
+        {% else %}
+        <div class="col-span-full py-20 glass-card rounded-[40px] text-center">
+            <div class="w-16 h-16 bg-forest/5 rounded-full flex items-center justify-center mx-auto mb-4">
+                <i class="fas fa-store-slash text-forest/30 text-2xl"></i>
+            </div>
+            <p class="text-forest/60 font-medium">{{ gettext('Market price data is currently unavailable. Please try again later.') }}</p>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         const searchBar = document.getElementById('searchBar');
-        const container = document.getElementById('crop-cards-container');
-        const items = container.getElementsByClassName('crop-card-item');
+        const items = document.querySelectorAll('.crop-card-item');
 
-        searchBar.addEventListener('keyup', function(event) {
+        searchBar.addEventListener('input', function(event) {
             const query = event.target.value.toLowerCase();
             
-            for (let i = 0; i < items.length; i++) {
-                const card = items[i];
-                const cropName = card.querySelector('.card-title').textContent.toLowerCase();
-                
+            items.forEach(item => {
+                const cropName = item.querySelector('h3').textContent.toLowerCase();
                 if (cropName.includes(query)) {
-                    card.style.display = '';
+                    item.style.display = '';
                 } else {
-                    card.style.display = 'none';
+                    item.style.display = 'none';
                 }
-            }
+            });
+        });
+        
+        // Entrance animation
+        gsap.from(".crop-card-item", {
+            opacity: 0,
+            y: 30,
+            duration: 0.8,
+            stagger: 0.1,
+            ease: "power2.out"
         });
     });
 </script>
-{% endblock %}
-
-{% block styles %}
-<style>
-    body {
-        background-color: #f8f9fa;
-    }
-    .crop-card {
-        border: none;
-        border-radius: 1rem;
-        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1);
-        transition: transform 0.2s;
-    }
-    .crop-card:hover {
-        transform: translateY(-5px);
-    }
-    .crop-icon {
-        font-size: 2.5rem;
-        color: #28a745;
-    }
-    .crop-price {
-        font-size: 1.5rem;
-        font-weight: 600;
-        color: #343a40;
-    }
-    .crop-unit {
-        font-size: 0.8rem;
-        color: #6c757d;
-    }
-    .search-bar {
-        border-radius: 2rem;
-        padding: 0.75rem 1.5rem;
-    }
-</style>
 {% endblock %}

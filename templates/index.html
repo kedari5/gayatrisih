@@ -1,287 +1,404 @@
 {% extends "base.html" %}
 
-{% block title %}Welcome to Krishi Sakhi{% endblock %}
+{% block title %}Krishi Sakhi - Cultivating Intelligence{% endblock %}
 
 {% block content %}
-<div class="hero-section text-center py-5 bg-success text-white rounded mb-4">
-    <div class="container">
-        <h1 class="display-4 mb-3">
-            <i class="fas fa-seedling me-3"></i>
-            <span data-translate="appName">Krishi Sakhi</span>
-        </h1>
-        <p class="lead mb-4" data-translate="appTagline">Your AI-Powered Personal Farming Assistant</p>
-        <p class="mb-4" data-translate="appDescription">Get personalized agricultural advice, weather updates, market prices, and farming guidance in your preferred language.</p>
-        <div class="d-flex justify-content-center gap-3">
-            <a href="{{ url_for('login') }}" class="btn btn-light btn-lg">
-                <i class="fas fa-sign-in-alt me-2"></i><span data-translate="login">Login</span>
-            </a>
-            <a href="{{ url_for('signup') }}" class="btn btn-outline-light btn-lg">
-                <i class="fas fa-user-plus me-2"></i><span data-translate="signup">Sign Up</span>
-            </a>
-        </div>
-    </div>
+<!-- Custom Cursor Follower -->
+<div id="cursor" class="fixed w-6 h-6 bg-[#1B4332]/40 border border-[#1B4332] rounded-full pointer-events-none z-[9999] transition-transform duration-100 ease-out transform -translate-x-1/2 -translate-y-1/2 backdrop-blur-sm hidden md:block"></div>
+
+<!-- Side Dot Navigation -->
+<div class="fixed right-8 top-1/2 -translate-y-1/2 flex flex-col space-y-4 z-50 hidden md:flex" id="dot-nav">
+  <a href="#hero" class="dot-btn w-3 h-3 rounded-full bg-[#1B4332] transition-all hover:scale-150"></a>
+  <a href="#market" class="dot-btn w-3 h-3 rounded-full border border-[#1B4332] hover:bg-[#1B4332] transition-all"></a>
+  <a href="#language" class="dot-btn w-3 h-3 rounded-full border border-[#1B4332] hover:bg-[#1B4332] transition-all"></a>
 </div>
 
-<div class="row">
-    <div class="col-md-4 mb-4">
-        <div class="card h-100">
-            <div class="card-body text-center">
-                <i class="fas fa-robot fa-3x text-success mb-3"></i>
-                <h5 class="card-title" data-translate="aiAssistant">AI Chat Assistant</h5>
-                <p class="card-text" data-translate="aiAssistantDesc">Get instant answers to your farming questions with our AI-powered chat assistant that understands your local context.</p>
-            </div>
-        </div>
+<!-- Main Wrapper -->
+<div class="bg-[#F8F9FA] min-h-screen relative overflow-hidden -mx-4 md:-mx-6 rounded-[40px] md:rounded-[80px]">
+
+  <!-- Hero Section -->
+  <section id="hero" class="relative min-h-screen flex items-center px-6 md:px-16 pt-20">
+    <!-- Left Content -->
+    <div class="w-full md:w-1/2 z-10 hero-elem" data-gsap="scale">
+      <!-- Voice Waveform / Listening Bar -->
+      <div class="inline-flex items-center gap-2 px-5 py-2.5 bg-[#1B4332]/5 rounded-full border border-[#1B4332]/10 mb-8 backdrop-blur-sm">
+          <i class="fas fa-microphone text-[#52B788]"></i>
+          <span class="text-xs font-bold text-[#1B4332] uppercase tracking-widest" data-translate="aiListening">Voice-First Intelligence</span>
+          <div class="flex gap-1 ms-3">
+              <div class="w-1 h-3 bg-[#52B788] rounded-full animate-pulse"></div>
+              <div class="w-1 h-4 bg-[#52B788] rounded-full animate-pulse" style="animation-delay: 0.2s;"></div>
+              <div class="w-1 h-2 bg-[#52B788] rounded-full animate-pulse" style="animation-delay: 0.4s;"></div>
+              <div class="w-1 h-5 bg-[#1B4332] rounded-full animate-pulse" style="animation-delay: 0.1s;"></div>
+          </div>
+      </div>
+      
+      <h1 class="text-5xl md:text-7xl font-serif text-[#1B4332] leading-[1.1]">
+        Krishi Sakhi: <br/>
+        <span class="text-[#52B788] italic block mt-2 min-h-[140px] lg:min-h-[100px]" id="changing-text">Your Smart Companion</span>
+      </h1>
+      <p class="mt-6 text-xl text-[#1B4332]/70 max-w-lg font-light leading-relaxed" data-translate="appDescription">
+        Empowering 140 million Indian farmers with Gemini-powered AI intelligence in their own voice.
+      </p>
+      
+      <div class="mt-12 flex flex-col sm:flex-row gap-6 items-start sm:items-center">
+        <!-- Leaf Shaped Button -->
+        <a href="{{ url_for('signup') }}" class="px-10 py-5 bg-[#1B4332] text-white font-bold hover:shadow-2xl hover:bg-[#2D6A4F] transition-all leaf-btn-cursor relative group overflow-hidden" 
+           style="border-radius: 35px 8px 35px 8px;">
+          <span class="relative z-10" data-translate="signup">Get Started</span>
+          <div class="absolute inset-0 bg-white opacity-0 group-hover:opacity-10 transition-opacity"></div>
+        </a>
+        <a href="{{ url_for('login') }}" class="flex items-center space-x-3 text-[#1B4332] font-semibold hover:opacity-80 transition-opacity leaf-btn-cursor group">
+          <span data-translate="login" class="underline underline-offset-4 decoration-[#1B4332]/30 group-hover:decoration-[#52B788] transition-colors">Login</span>
+          <div class="p-3 rounded-full border border-[#1B4332]/20 group-hover:bg-[#1B4332]/5 transition-colors text-xs">
+            <i class="fas fa-play"></i>
+          </div>
+        </a>
+      </div>
     </div>
-    <div class="col-md-4 mb-4">
-        <div class="card h-100">
-            <div class="card-body text-center">
-                <i class="fas fa-cloud-sun fa-3x text-success mb-3"></i>
-                <h5 class="card-title" data-translate="weatherUpdates">Weather Updates</h5>
-                <p class="card-text" data-translate="weatherUpdatesDesc">Stay informed with real-time weather updates specific to your farming location and get weather-based farming advice.</p>
-            </div>
-        </div>
+
+    <!-- Right Side: Floating Sprout Image -->
+    <div class="hidden md:block w-1/2 relative h-full flex justify-center items-center hero-elem" data-gsap="scale" style="transition-delay: 0.2s;">
+      <div class="absolute inset-0 bg-[#52B788] opacity-10 rounded-full blur-[120px] animate-pulse"></div>
+      
+      <!-- Market-leading Leaf Shape Masked Image -->
+      <div class="relative z-10 w-[80%] mx-auto h-[600px] shadow-2xl overflow-hidden group perspective-1000 bg-white" 
+           style="border-radius: 50% 10% 50% 10%;">
+          <img src="https://images.unsplash.com/photo-1523348837708-15d4a09cfac2?auto=format&fit=crop&q=80" 
+               alt="Sprout in sphere" 
+               class="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-1000">
+          
+          <div class="absolute inset-0 bg-gradient-to-t from-[#1B4332]/80 via-transparent to-transparent opacity-60"></div>
+          
+          <!-- Small overlay card -->
+          <div class="absolute bottom-10 left-10 p-5 bg-white/20 backdrop-blur-md border border-white/30 rounded-2xl squircle shadow-lg transform group-hover:-translate-y-2 transition-transform">
+              <div class="flex items-center gap-3">
+                  <div class="w-10 h-10 rounded-full bg-white flex items-center justify-center">
+                      <i class="fas fa-spa text-[#52B788]"></i>
+                  </div>
+                  <div>
+                      <p class="text-white font-bold text-sm">Optimum Yield</p>
+                      <p class="text-white/80 text-xs">Analysis complete.</p>
+                  </div>
+              </div>
+          </div>
+      </div>
     </div>
-    <div class="col-md-4 mb-4">
-        <div class="card h-100">
-            <div class="card-body text-center">
-                <i class="fas fa-chart-line fa-3x text-success mb-3"></i>
-                <h5 class="card-title" data-translate="marketPrices">Market Prices</h5>
-                <p class="card-text" data-translate="marketPricesDesc">Track agricultural commodity prices and market trends to make informed decisions about your crops.</p>
-            </div>
-        </div>
+  </section>
+
+  <!-- Market Prices (The Leaf Grid) -->
+  <section id="market" class="py-32 px-6 md:px-16 relative">
+    <div class="text-center mb-24 reveal">
+        <h2 class="text-5xl font-serif text-[#1B4332] mb-4" data-translate="marketPulse">Real-Time Market Pulse</h2>
+        <p class="text-[#1B4332]/60 max-w-2xl mx-auto text-lg">Live APMC Mandi rates brought to you organically.</p>
     </div>
+    
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12 max-w-7xl mx-auto">
+      <!-- Leaf Card 1 -->
+      <div class="group relative p-10 bg-[#F1F8F5] transition-all duration-500 hover:-translate-y-4 hover:shadow-2xl leaf-btn-cursor reveal"
+           style="border-radius: 80px 10px 80px 10px;">
+        <!-- Vein texture background -->
+        <div class="absolute inset-0 opacity-[0.03] pointer-events-none overflow-hidden" style="border-radius: 80px 10px 80px 10px;">
+            <svg viewBox="0 0 100 100" class="w-full h-full scale-150 transform -rotate-12">
+                <path d="M50 0 C 60 40, 40 60, 50 100 M50 20 Q 70 30, 80 40 M50 50 Q 30 60, 20 70" stroke="#1B4332" stroke-width="0.5" fill="none"/>
+            </svg>
+        </div>
+        <div class="relative z-10">
+            <div class="flex justify-between items-start">
+              <div>
+                <span class="text-xs uppercase tracking-widest text-[#52B788] font-bold">Paddy / Dhan</span>
+                <h3 class="text-4xl font-bold text-[#1B4332] mt-2">₹2,183</h3>
+              </div>
+              <div class="h-14 w-14 bg-white rounded-full flex items-center justify-center shadow-sm text-2xl group-hover:scale-110 transition-transform text-[#1B4332]">
+                 🌾
+              </div>
+            </div>
+            <p class="mt-4 text-sm text-gray-500 italic">Karnal APMC, Haryana</p>
+            <div class="mt-6 h-[1px] bg-[#52B788]/20 w-full group-hover:bg-[#52B788]/60 transition-colors"></div>
+            <p class="mt-4 text-xs font-semibold text-[#52B788]">▲ 2.4% vs Yesterday</p>
+        </div>
+      </div>
+
+      <!-- Leaf Card 2 -->
+      <div class="group relative p-10 bg-[#F1F8F5] transition-all duration-500 hover:-translate-y-4 hover:shadow-2xl leaf-btn-cursor reveal" style="transition-delay: 0.1s; border-radius: 80px 10px 80px 10px;">
+        <div class="absolute inset-0 opacity-[0.03] pointer-events-none overflow-hidden" style="border-radius: 80px 10px 80px 10px;">
+            <svg viewBox="0 0 100 100" class="w-full h-full scale-150 transform -rotate-12">
+                <path d="M50 0 C 60 40, 40 60, 50 100 M50 20 Q 70 30, 80 40 M50 50 Q 30 60, 20 70" stroke="#1B4332" stroke-width="0.5" fill="none"/>
+            </svg>
+        </div>
+        <div class="relative z-10">
+            <div class="flex justify-between items-start">
+              <div>
+                <span class="text-xs uppercase tracking-widest text-[#52B788] font-bold">Wheat / Gehun</span>
+                <h3 class="text-4xl font-bold text-[#1B4332] mt-2">₹2,275</h3>
+              </div>
+              <div class="h-14 w-14 bg-white rounded-full flex items-center justify-center shadow-sm text-2xl group-hover:scale-110 transition-transform text-[#1B4332]">
+                 🥖
+              </div>
+            </div>
+            <p class="mt-4 text-sm text-gray-500 italic">Ludhiana APMC, Punjab</p>
+            <div class="mt-6 h-[1px] bg-[#52B788]/20 w-full group-hover:bg-[#52B788]/60 transition-colors"></div>
+            <p class="mt-4 text-xs font-semibold text-[#52B788]">▲ 1.1% vs Yesterday</p>
+        </div>
+      </div>
+
+      <!-- Leaf Card 3 -->
+      <div class="group relative p-10 bg-[#F1F8F5] transition-all duration-500 hover:-translate-y-4 hover:shadow-2xl leaf-btn-cursor reveal" style="transition-delay: 0.2s; border-radius: 80px 10px 80px 10px;">
+        <div class="absolute inset-0 opacity-[0.03] pointer-events-none overflow-hidden" style="border-radius: 80px 10px 80px 10px;">
+            <svg viewBox="0 0 100 100" class="w-full h-full scale-150 transform -rotate-12">
+                <path d="M50 0 C 60 40, 40 60, 50 100 M50 20 Q 70 30, 80 40 M50 50 Q 30 60, 20 70" stroke="#1B4332" stroke-width="0.5" fill="none"/>
+            </svg>
+        </div>
+        <div class="relative z-10">
+            <div class="flex justify-between items-start">
+              <div>
+                <span class="text-xs uppercase tracking-widest text-[#52B788] font-bold">Cotton / Kapas</span>
+                <h3 class="text-4xl font-bold text-[#1B4332] mt-2">₹6,830</h3>
+              </div>
+              <div class="h-14 w-14 bg-white rounded-full flex items-center justify-center shadow-sm text-2xl group-hover:scale-110 transition-transform text-[#1B4332]">
+                 ☁️
+              </div>
+            </div>
+            <p class="mt-4 text-sm text-gray-500 italic">Rajkot APMC, Gujarat</p>
+            <div class="mt-6 h-[1px] bg-[#52B788]/20 w-full group-hover:bg-[#52B788]/60 transition-colors"></div>
+            <p class="mt-4 text-xs font-semibold text-red-500">▼ 0.5% vs Yesterday</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Language Bubbles Section -->
+  <section id="language" class="py-32 px-6 overflow-hidden relative" style="transition: background-color 1s ease;">
+      <div class="text-center mb-16 relative z-20 reveal">
+          <h2 class="text-5xl font-serif text-[#1B4332] mb-4" data-translate="chooseLanguage">Speak Your Roots</h2>
+          <p class="text-[#1B4332]/60 max-w-2xl mx-auto text-lg">Pop a bubble to switch your world. We speak your language.</p>
+      </div>
+
+      <div class="relative h-[500px] w-full max-w-6xl mx-auto z-10 hidden md:block" id="bubble-container">
+          {% set langs = [
+              {'code': 'en', 'label': 'Eng', 'color': '#D8F3DC', 'size': 'w-32 h-32', 'pos': 'top: 10%; left: 20%;'},
+              {'code': 'hi', 'label': 'हिन्दी', 'color': '#B7E4C7', 'size': 'w-44 h-44', 'pos': 'top: 30%; left: 45%;'},
+              {'code': 'ta', 'label': 'தமிழ்', 'color': '#95D5B2', 'size': 'w-24 h-24', 'pos': 'top: 60%; left: 25%;'},
+              {'code': 'te', 'label': 'తెలుగు', 'color': '#74C69D', 'size': 'w-36 h-36', 'pos': 'top: 15%; left: 75%;'},
+              {'code': 'ml', 'label': 'മലയാളം', 'color': '#52B788', 'size': 'w-32 h-32', 'pos': 'top: 60%; left: 65%;'},
+              {'code': 'kn', 'label': 'ಕನ್ನಡ', 'color': '#40916C', 'size': 'w-28 h-28', 'pos': 'top: 80%; left: 45%;'}
+          ] %}
+          
+          {% for lang in langs %}
+          <div class="language-bubble absolute rounded-full flex items-center justify-center cursor-pointer shadow-xl hover:shadow-2xl transition-all hover:scale-110 leaf-btn-cursor bubble-anim {{ lang.size }}"
+               data-lang="{{ lang.code }}" data-color="{{ lang.color }}"
+               style="background-color: {{ lang.color }}; {{ lang.pos }} animation-delay: {{ loop.index0 * 0.7 }}s;">
+              <span class="{% if loop.index > 4 %}text-white{% else %}text-[#1B4332]{% endif %} font-bold text-xl drop-shadow-sm">{{ lang.label }}</span>
+          </div>
+          {% endfor %}
+      </div>
+      
+      <!-- Mobile Fallback for languages -->
+      <div class="md:hidden grid grid-cols-2 gap-4 max-w-sm mx-auto relative z-10">
+          {% for lang in langs %}
+          <div class="language-bubble p-4 rounded-3xl text-center shadow-sm cursor-pointer" 
+               data-lang="{{ lang.code }}" data-color="{{ lang.color }}"
+               style="background-color: {{ lang.color }};">
+              <span class="{% if loop.index > 4 %}text-white{% else %}text-[#1B4332]{% endif %} font-bold">{{ lang.label }}</span>
+          </div>
+          {% endfor %}
+      </div>
+  </section>
+
 </div>
 
-<div class="row mt-4">
-    <div class="col-md-6 mb-4">
-        <div class="card">
-            <div class="card-body">
-                <h5 class="card-title"><i class="fas fa-globe me-2"></i><span data-translate="multilingualSupport">Multilingual Support</span></h5>
-                <p class="card-text" data-translate="multilingualSupportDesc">Access all features in your preferred language including English, Malayalam, Hindi, Tamil, Telugu, and Kannada.</p>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-6 mb-4">
-        <div class="card">
-            <div class="card-body">
-                <h5 class="card-title"><i class="fas fa-microphone me-2"></i><span data-translate="voiceInteraction">Voice Interaction</span></h5>
-                <p class="card-text" data-translate="voiceInteractionDesc">Speak to your farming assistant and get voice responses - perfect for farmers working in the field.</p>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Language Selection Section -->
-<div class="card mt-4">
-    <div class="card-header text-center">
-        <h5 data-translate="chooseLanguage">Choose Your Language</h5>
-    </div>
-    <div class="card-body">
-        <div class="row text-center">
-            <div class="col-md-2 col-4 mb-3">
-                <a href="#" class="language-change text-decoration-none" data-lang="en">
-                    <div class="card">
-                        <div class="card-body">
-                            <div class="fw-bold">English</div>
-                            <small>English</small>
-                        </div>
-                    </div>
-                </a>
-            </div>
-            <div class="col-md-2 col-4 mb-3">
-                <a href="#" class="language-change text-decoration-none" data-lang="ml">
-                    <div class="card">
-                        <div class="card-body">
-                            <div class="fw-bold">മലയാളം</div>
-                            <small>Malayalam</small>
-                        </div>
-                    </div>
-                </a>
-            </div>
-            <div class="col-md-2 col-4 mb-3">
-                <a href="#" class="language-change text-decoration-none" data-lang="hi">
-                    <div class="card">
-                        <div class="card-body">
-                            <div class="fw-bold">हिन्दी</div>
-                            <small>Hindi</small>
-                        </div>
-                    </div>
-                </a>
-            </div>
-            <div class="col-md-2 col-4 mb-3">
-                <a href="#" class="language-change text-decoration-none" data-lang="ta">
-                    <div class="card">
-                        <div class="card-body">
-                            <div class="fw-bold">தமிழ்</div>
-                            <small>Tamil</small>
-                        </div>
-                    </div>
-                </a>
-            </div>
-            <div class="col-md-2 col-4 mb-3">
-                <a href="#" class="language-change text-decoration-none" data-lang="te">
-                    <div class="card">
-                        <div class="card-body">
-                            <div class="fw-bold">తెలుగు</div>
-                            <small>Telugu</small>
-                        </div>
-                    </div>
-                </a>
-            </div>
-            <div class="col-md-2 col-4 mb-3">
-                <a href="#" class="language-change text-decoration-none" data-lang="kn">
-                    <div class="card">
-                        <div class="card-body">
-                            <div class="fw-bold">ಕನ್ನಡ</div>
-                            <small>Kannada</small>
-                        </div>
-                    </div>
-                </a>
-            </div>
-        </div>
-    </div>
-</div>
+<style>
+  /* Base Overrides for Landing */
+  body { background-color: #F8F9FA; border-radius: 40px; margin: 16px; min-height: calc(100vh - 32px); }
+  
+  /* Morphing text transition */
+  #changing-text { transition: opacity 0.5s ease-in-out; }
+  
+  /* Bubble floating animation */
+  @keyframes floatBubble {
+      0% { transform: translateY(0px) rotate(0deg); }
+      50% { transform: translateY(-20px) rotate(5deg); }
+      100% { transform: translateY(0px) rotate(0deg); }
+  }
+  .bubble-anim { animation: floatBubble 6s ease-in-out infinite; }
+  
+  /* Custom Cursor styles */
+  body:hover #cursor { opacity: 1; }
+  #cursor { opacity: 0; pointer-events: none; }
+  .cursor-expand {
+      transform: translate(-50%, -50%) scale(3) !important;
+      background-color: rgba(82, 183, 136, 0.2) !important;
+      border-color: transparent !important;
+      backdrop-filter: blur(2px) !important;
+  }
+</style>
 {% endblock %}
 
 {% block scripts %}
 <script>
-    // Add index page specific translations
-    const indexTranslations = {
-        en: {
-            appName: "Krishi Sakhi",
-            appTagline: "Your AI-Powered Personal Farming Assistant",
-            appDescription: "Get personalized agricultural advice, weather updates, market prices, and farming guidance in your preferred language.",
-            login: "Login",
-            signup: "Sign Up",
-            aiAssistant: "AI Chat Assistant",
-            aiAssistantDesc: "Get instant answers to your farming questions with our AI-powered chat assistant that understands your local context.",
-            weatherUpdates: "Weather Updates",
-            weatherUpdatesDesc: "Stay informed with real-time weather updates specific to your farming location and get weather-based farming advice.",
-            marketPrices: "Market Prices",
-            marketPricesDesc: "Track agricultural commodity prices and market trends to make informed decisions about your crops.",
-            multilingualSupport: "Multilingual Support",
-            multilingualSupportDesc: "Access all features in your preferred language including English, Malayalam, Hindi, Tamil, Telugu, and Kannada.",
-            voiceInteraction: "Voice Interaction",
-            voiceInteractionDesc: "Speak to your farming assistant and get voice responses - perfect for farmers working in the field.",
-            chooseLanguage: "Choose Your Language"
-        },
-        ml: {
-            appName: "കൃഷി സഖി",
-            appTagline: "നിങ്ങളുടെ AI-പവർഡ് വ്യക്തിഗത ഫാമിംഗ് അസിസ്റ്റന്റ്",
-            appDescription: "വ്യക്തിഗത കൃഷി ഉപദേശം, കാലാവസ്ഥ അപ്ഡേറ്റുകൾ, മാർക്കറ്റ് വിലകൾ, നിങ്ങൾക്കിഷ്ടമുള്ള ഭാഷയിൽ ഫാമിംഗ് മാർഗനിർദേശം എന്നിവ നേടുക.",
-            login: "ലോഗിൻ",
-            signup: "സൈൻ അപ്പ്",
-            aiAssistant: "AI ചാറ്റ് അസിസ്റ്റന്റ്",
-            aiAssistantDesc: "നിങ്ങളുടെ പ്രാദേശിക സന്ദർഭം മനസ്സിലാക്കുന്ന ഞങ്ങളുടെ AI-പവർഡ് ചാറ്റ് അസിസ്റ്റന്റ് ഉപയോഗിച്ച് നിങ്ങളുടെ കൃഷി ചോദ്യങ്ങൾക്ക് തൽക്ഷണം ഉത്തരങ്ങൾ നേടുക.",
-            weatherUpdates: "കാലാവസ്ഥ അപ്ഡേറ്റുകൾ",
-            weatherUpdatesDesc: "നിങ്ങളുടെ ഫാമിംഗ് സ്ഥാനത്തിന് നിർദ്ദിഷ്ടമായ റിയൽ-ടൈം കാലാവസ്ഥ അപ്ഡേറ്റുകളിൽ വിവരങ്ങൾ നിലനിർത്തുക, കാലാവസ്ഥ അടിസ്ഥാനമാക്കിയുള്ള ഫാമിംഗ് ഉപദേശം നേടുക.",
-            marketPrices: "മാർക്കറ്റ് വിലകൾ",
-            marketPricesDesc: "കാർഷിക വിപണന വിലകളും മാർക്കറ്റ് പ്രവണതകളും ട്രാക്ക് ചെയ്ത് നിങ്ങളുടെ പയറുകളെക്കുറിച്ച് അറിവുള്ള തീരുമാനങ്ങൾ എടുക്കുക.",
-            multilingualSupport: "മൾട്ടിലിംഗ്വൽ പിന്തുണ",
-            multilingualSupportDesc: "ഇംഗ്ലീഷ്, മലയാളം, ഹിന്ദി, തമിഴ്, തെലുങ്ക്, കന്നഡ എന്നിവയുൾപ്പെടെ നിങ്ങൾക്കിഷ്ടമുള്ള ഭാഷയിൽ എല്ലാ സവിശേഷതകളും ആക്‌സസ് ചെയ്യുക.",
-            voiceInteraction: "വോയ്‌സ് ഇന്ററാക്ഷൻ",
-            voiceInteractionDesc: "നിങ്ങളുടെ ഫാമിംഗ് അസിസ്റ്റന്റുമായി സംസാരിക്കുക, വോയ്‌സ് പ്രതികരണങ്ങൾ നേടുക - ഫീൽഡിൽ പ്രവർത്തിക്കുന്ന കർഷകർക്ക് അനുയോജ്യം.",
-            chooseLanguage: "നിങ്ങളുടെ ഭാഷ തിരഞ്ഞെടുക്കുക"
-        },
-        hi: {
-            appName: "कृषि सखी",
-            appTagline: "आपका AI-संचालित व्यक्तिगत कृषि सहायक",
-            appDescription: "अपनी पसंदीदा भाषा में व्यक्तिगत कृषि सलाह, मौसम अपडेट, बाजार कीमतें और कृषि मार्गदर्शन प्राप्त करें।",
-            login: "लॉगिन",
-            signup: "साइन अप",
-            aiAssistant: "AI चैट सहायक",
-            aiAssistantDesc: "हमारे AI-संचालित चैट सहायक के साथ अपने कृषि प्रश्नों के तुरंत उत्तर प्राप्त करें जो आपके स्थानीय संदर्भ को समझता है।",
-            weatherUpdates: "मौसम अपडेट",
-            weatherUpdatesDesc: "अपने कृषि स्थान के लिए विशिष्ट वास्तविक समय के मौसम अपडेट से सूचित रहें और मौसम-आधारित कृषि सलाह प्राप्त करें।",
-            marketPrices: "बाजार कीमतें",
-            marketPricesDesc: "कृषि वस्तुओं की कीमतों और बाजार के रुझानों को ट्रैक करें और अपनी फसलों के बारे में सूचित निर्णय लें।",
-            multilingualSupport: "बहुभाषी समर्थन",
-            multilingualSupportDesc: "अंग्रेजी, मलयालम, हिंदी, तमिल, तेलुगु और कन्नड़ सहित अपनी पसंदीदा भाषा में सभी सुविधाओं तक पहुंचें।",
-            voiceInteraction: "आवाज इंटरैक्शन",
-            voiceInteractionDesc: "अपने कृषि सहायक से बात करें और आवाज प्रतिक्रियाएं प्राप्त करें - खेत में काम करने वाले किसानों के लिए आदर्श।",
-            chooseLanguage: "अपनी भाषा चुनें"
-        },
-        ta: {
-            appName: "கிரிஷி சகி",
-            appTagline: "உங்கள் AI-இயக்கும் தனிப்பட்ட விவசாய உதவியாளர்",
-            appDescription: "தனிப்பட்ட விவசாய ஆலோசனை, வானிலை புதுப்பிப்புகள், சந்தை விலைகள் மற்றும் விவசாய வழிகாட்டுதலை உங்களுக்கு விருப்பமான மொழியில் பெறவும்.",
-            login: "உள்நுழைய",
-            signup: "பதிவு செய்ய",
-            aiAssistant: "AI அரட்டை உதவியாளர்",
-            aiAssistantDesc: "உங்கள் உள்ளூர் சூழலைப் புரிந்துகொள்ளும் எங்கள் AI-இயக்கும் அரட்டை உதவியாளருடன் உங்கள் விவசாய கேள்விகளுக்கு உடனடி பதில்களைப் பெறுங்கள்.",
-            weatherUpdates: "வானிலை புதுப்பிப்புகள்",
-            weatherUpdatesDesc: "உங்கள் விவசாய இடத்திற்கு குறிப்பிட்ட நிகழ்நேர வானிலை புதுப்பிப்புகளுடன் தகவலறிந்திருங்கள் மற்றும் வானிலை-அடிப்படையிலான விவசாய ஆலோசனையைப் பெறுங்கள்.",
-            marketPrices: "சந்தை விலைகள்",
-            marketPricesDesc: "விவசாய பொருட்களின் விலைகள் மற்றும் சந்தை போக்குகளைக் கண்காணித்து உங்கள் பயிர்கள் குறித்து தகவலறிந்த முடிவுகளை எடுக்கவும்.",
-            multilingualSupport: "பல மொழி ஆதரவு",
-            multilingualSupportDesc: "ஆங்கிலம், மலையாளம், இந்தி, தமிழ், தெலுங்கு மற்றும் கன்னடம் உட்பட உங்களுக்கு விருப்பமான மொழியில் அனைத்து அம்சங்களையும் அணுகவும்.",
-            voiceInteraction: "குரல் தொடர்பு",
-            voiceInteractionDesc: "உங்கள் விவசாய உதவியாளருடன் பேசுங்கள் மற்றும் குரல் பதில்களைப் பெறுங்கள் - வயலில் பணிபுரியும் விவசாயிகளுக்கு சிறந்தது.",
-            chooseLanguage: "உங்கள் மொழியைத் தேர்ந்தெடுக்கவும்"
-        },
-        te: {
-            appName: "కృషి సఖి",
-            appTagline: "మీ AI-శక్తితో కూడిన వ్యక్తిగత వ్యవసాయ సహాయకుడు",
-            appDescription: "వ్యక్తిగతీకరించిన వ్యవసాయ సలహాలు, వాతావరణ నవీకరణలు, మార్కెట్ ధరలు మరియు వ్యవసాయ మార్గదర్శకత్వాన్ని మీకు ఇష్టమైన భాషలో పొందండి.",
-            login: "లాగిన్",
-            signup: "సైన్ అప్",
-            aiAssistant: "AI చాట్ అసిస్టెంట్",
-            aiAssistantDesc: "మీ స్థానిక సందర్భాన్ని అర్థం చేసుకునే మా AI-శక్తితో కూడిన చాట్ అసిస్టెంట్‌తో మీ వ్యవసాయ ప్రశ్నలకు తక్షణ సమాధానాలు పొందండి.",
-            weatherUpdates: "వాతావరణ నవీకరణలు",
-            weatherUpdatesDesc: "మీ వ్యవసాయ స్థానానికి నిర్దిష్టమైన రియల్-టైమ్ వాతావరణ నవీకరణలతో సమాచారం పొందండి మరియు వాతావరణ-ఆధారిత వ్యవసాయ సలహాలను పొందండి.",
-            marketPrices: "మార్కెట్ ధరలు",
-            marketPricesDesc: "కృషి వస్తువుల ధరలు మరియు మార్కెట్ ధోరణులను ట్రాక్ చేసి మీ పంటల గురించి సమాచారం నిర్ణయాలు తీసుకోండి.",
-            multilingualSupport: "బహుభాషా మద్దతు",
-            multilingualSupportDesc: "ఇంగ్లీష్, మలయాళం, హిందీ, తమిళం, తెలుగు మరియు కన్నడ సహా మీకు ఇష్టమైన భాషలో అన్ని లక్షణాలను యాక్సెస్ చేయండి.",
-            voiceInteraction: "వాయిస్ ఇంటరాక్షన్",
-            voiceInteractionDesc: "మీ వ్యవసాయ సహాయకుడితో మాట్లాడండి మరియు వాయిస్ ప్రతిస్పందనలను పొందండి - ఫీల్డ్‌లో పని చేసే రైతులకు సరైనది.",
-            chooseLanguage: "మీ భాషను ఎంచుకోండి"
-        },
-        kn: {
-            appName: "ಕೃಷಿ ಸಖಿ",
-            appTagline: "ನಿಮ್ಮ AI-ಶಕ್ತಿಯ ವೈಯಕ್ತಿಕ ಕೃಷಿ ಸಹಾಯಕ",
-            appDescription: "ವೈಯಕ್ತಿಕೃತ ಕೃಷಿ ಸಲಹೆ, ಹವಾಮಾನ ನವೀಕರಣಗಳು, ಮಾರುಕಟ್ಟೆ ಬೆಲೆಗಳು ಮತ್ತು ಕೃಷಿ ಮಾರ್ಗದರ್ಶನವನ್ನು ನಿಮ್ಮ ಆದ್ಯತೆಯ ಭಾಷೆಯಲ್ಲಿ ಪಡೆಯಿರಿ.",
-            login: "ಲಾಗಿನ್",
-            signup: "ಸೈನ್ ಅಪ್",
-            aiAssistant: "AI ಚಾಟ್ ಸಹಾಯಕ",
-            aiAssistantDesc: "ನಿಮ್ಮ ಸ್ಥಳೀಯ ಸನ್ನಿವೇಶವನ್ನು ಅರ್ಥಮಾಡಿಕೊಳ್ಳುವ ನಮ್ಮ AI-ಶಕ್ತಿಯ ಚಾಟ್ ಸಹಾಯಕದೊಂದಿಗೆ ನಿಮ್ಮ ಕೃಷಿ ಪ್ರಶ್ನೆಗಳಿಗೆ ತ್ವರಿತ ಉತ್ತರಗಳನ್ನು ಪಡೆಯಿರಿ.",
-            weatherUpdates: "ಹವಾಮಾನ ನವೀಕರಣಗಳು",
-            weatherUpdatesDesc: "ನಿಮ್ಮ ಕೃಷಿ ಸ್ಥಳಕ್ಕೆ ನಿರ್ದಿಷ್ಟವಾದ ರಿಯಲ್-ಟೈಮ್ ಹವಾಮಾನ ನವೀಕರಣಗಳೊಂದಿಗೆ ತಿಳಿಸುವುದನ್ನು ಮುಂದುವರಿಸಿ ಮತ್ತು ಹವಾಮಾನ-ಆಧಾರಿತ ಕೃಷಿ ಸಲಹೆಯನ್ನು ಪಡೆಯಿರಿ.",
-            marketPrices: "ಮಾರುಕಟ್ಟೆ ಬೆಲೆಗಳು",
-            marketPricesDesc: "ಕೃಷಿ ವಸ್ತುಗಳ ಬೆಲೆಗಳು ಮತ್ತು ಮಾರುಕಟ್ಟೆ ಪ್ರವೃತ್ತಿಗಳನ್ನು ಟ್ರ್ಯಾಕ್ ಮಾಡಿ ಮತ್ತು ನಿಮ್ಮ ಬೆಳೆಗಳ ಕುರಿತು ಸೂಚಿತ ನಿರ್ಧಾರಗಳನ್ನು ತೆಗೆದುಕೊಳ್ಳಿ.",
-            multilingualSupport: "ಬಹುಭಾಷಾ ಬೆಂಬಲ",
-            multilingualSupportDesc: "ಇಂಗ್ಲಿಷ್, ಮಲಯಾಳಂ, ಹಿಂದಿ, ತಮಿಳು, ತೆಲುಗು ಮತ್ತು ಕನ್ನಡ ಸೇರಿದಂತೆ ನಿಮ್ಮ ಆದ್ಯತೆಯ ಭಾಷೆಯಲ್ಲಿ ಎಲ್ಲಾ ವೈಶಿಷ್ಟ್ಯಗಳನ್ನು ಪ್ರವೇಶಿಸಿ.",
-            voiceInteraction: "ವಾಯ್ಸ್ ಇಂಟರ್ಯಾಕ್ಷನ್",
-            voiceInteractionDesc: "ನಿಮ್ಮ ಕೃಷಿ ಸಹಾಯಕರೊಂದಿಗೆ ಮಾತನಾಡಿ ಮತ್ತು ವಾಯ್ಸ್ ಪ್ರತಿಕ್ರಿಯೆಗಳನ್ನು ಪಡೆಯಿರಿ - ಕ್ಷೇತ್ರದಲ್ಲಿ ಕೆಲಸ ಮಾಡುವ ರೈತರಿಗೆ ಸೂಕ್ತವಾಗಿದೆ.",
-            chooseLanguage: "ನಿಮ್ಮ ಭಾಷೆಯನ್ನು ಆರಿಸಿ"
-        }
-    };
+  // Morphing Hero Text (Agronest Style)
+  const textElement = document.getElementById('changing-text');
+  if (textElement) {
+      const phrases = ['Personalized Intelligence', 'Market Empowerment', 'Voice Assistance'];
+      let i = 1;
+      setInterval(() => {
+        textElement.style.opacity = 0;
+        setTimeout(() => {
+          textElement.innerText = phrases[i];
+          textElement.style.opacity = 1;
+          i = (i + 1) % phrases.length;
+        }, 500);
+      }, 3500);
+  }
 
-    // Merge index translations with base translations
-    document.addEventListener('DOMContentLoaded', function() {
-        // Wait for base translations to load
-        setTimeout(function() {
-            if (typeof translations !== 'undefined') {
-                // Merge translations
-                for (const lang in indexTranslations) {
-                    if (translations[lang]) {
-                        translations[lang] = {...translations[lang], ...indexTranslations[lang]};
-                    } else {
-                        translations[lang] = indexTranslations[lang];
-                    }
-                }
-                
-                // Apply translations if language is already set
-                if (typeof currentLanguage !== 'undefined') {
-                    document.querySelectorAll('[data-translate]').forEach(function(element) {
-                        const key = element.getAttribute('data-translate');
-                        if (translations[currentLanguage] && translations[currentLanguage][key]) {
-                            element.textContent = translations[currentLanguage][key];
-                        }
-                    });
-                }
-            }
-        }, 100);
-    });
+  // Custom Cursor Interaction
+  const cursor = document.getElementById('cursor');
+  if (cursor && window.innerWidth > 768) {
+      document.addEventListener('mousemove', (e) => {
+          // Adjust for smooth tracking
+          requestAnimationFrame(() => {
+              cursor.style.left = e.clientX + 'px';
+              cursor.style.top = e.clientY + 'px';
+          });
+      });
+
+      // Expand custom cursor on interactive elements
+      const interactiveElements = document.querySelectorAll('a, button, .leaf-btn-cursor');
+      interactiveElements.forEach(el => {
+          el.addEventListener('mouseenter', () => cursor.classList.add('cursor-expand'));
+          el.addEventListener('mouseleave', () => cursor.classList.remove('cursor-expand'));
+      });
+  }
+
+  // Language Bubbles Interaction
+  const bubbles = document.querySelectorAll('.language-bubble');
+  const langSection = document.getElementById('language');
+
+  bubbles.forEach(bubble => {
+      bubble.addEventListener('click', function() {
+          const lang = this.getAttribute('data-lang');
+          const color = this.getAttribute('data-color');
+          
+          // Background shift effect on the section
+          langSection.style.backgroundColor = color;
+          setTimeout(() => { langSection.style.backgroundColor = 'transparent'; }, 1500);
+          
+          // Pop/Burst animation
+          if (typeof gsap !== 'undefined') {
+              gsap.timeline()
+                  .to(this, { scale: 1.3, duration: 0.2, ease: "back.out" })
+                  .to(this, { scale: 1, duration: 0.3, ease: "bounce.out" });
+          }
+          
+          // Trigger actual language change (function from base.html)
+          if (typeof changeLanguage === 'function') {
+              changeLanguage(lang);
+          }
+      });
+  });
+
+  // Active Dot Navigation via IntersectionObserver
+  const dots = document.querySelectorAll('.dot-btn');
+  const sections = ['hero', 'market', 'language'];
+  
+  if ("IntersectionObserver" in window && dots.length > 0) {
+      const observer = new IntersectionObserver((entries) => {
+          entries.forEach(entry => {
+              if (entry.isIntersecting) {
+                  const id = entry.target.id;
+                  dots.forEach(dot => {
+                      if (dot.getAttribute('href') === '#' + id) {
+                          dot.classList.add('bg-[#1B4332]');
+                          dot.classList.remove('bg-transparent');
+                      } else {
+                          dot.classList.remove('bg-[#1B4332]');
+                          dot.classList.add('bg-transparent');
+                      }
+                  });
+              }
+          });
+      }, { threshold: 0.5 });
+      
+      sections.forEach(id => {
+          const el = document.getElementById(id);
+          if (el) observer.observe(el);
+      });
+  }
+
+  // GSAP Entry Animations for Landing specific elements
+  document.addEventListener("DOMContentLoaded", () => {
+     if (typeof gsap !== 'undefined') {
+         // Scale effect that triggers on scroll
+         gsap.utils.toArray('[data-gsap="scale"]').forEach(elem => {
+             gsap.fromTo(elem, 
+                 { scale: 0.8, opacity: 0 },
+                 {
+                     scale: 1, 
+                     opacity: 1, 
+                     duration: 1.2, 
+                     ease: "elastic.out(1, 0.7)",
+                     scrollTrigger: {
+                         trigger: elem,
+                         start: "top 80%"
+                     }
+                 }
+             );
+         });
+     }
+  });
+
+  // Minimal Translations Map specifically for new content
+  const indexTranslations = {
+      en: {
+          appDescription: "Empowering 140 million Indian farmers with Gemini-powered AI intelligence in their own voice.",
+          aiListening: "Voice-First Intelligence",
+          marketPulse: "Real-Time Market Pulse",
+          chooseLanguage: "Speak Your Roots"
+      },
+      ml: {
+            appDescription: "ജെമിനി പവർ ചെയ്യുന്ന AI ഉപയോഗിച്ച് ഇന്ത്യയിലെ കർഷകരെ ശാക്തീകരിക്കുന്നു.",
+            aiListening: "ശബ്ദ-ആദ്യ ബുദ്ധി",
+            marketPulse: "തത്സമയ വിപണി നിരക്കുകൾ",
+            chooseLanguage: "നിങ്ങളുടെ ഭാഷ സംസാരിക്കുക"
+      },
+      hi: {
+          appDescription: "भारत के 14 करोड़ किसानों को उनकी अपनी आवाज में AI बुद्धिमत्ता से सशक्त बनाना।",
+          aiListening: "ध्वनि-प्रथम बुद्धिमत्ता",
+          marketPulse: "रियल-टाइम बाजार पल्स",
+          chooseLanguage: "अपनी भाषा बोलें"
+      },
+      ta: {
+            appDescription: "ஜெமினி மூலம் இந்திய விவசாயிகளை மேம்படுத்துகிறது.",
+            aiListening: "குரல்-முதல் நுண்ணறிவு",
+            marketPulse: "நிகழ்நேர சந்தை விலை",
+            chooseLanguage: "உங்கள் மொழியைத் தேர்ந்தெடுக்கவும்"
+      },
+      te: {
+            appDescription: "జెమినీ శక్తితో భారతీయ రైతులను సన్నద్ధం చేయడం.",
+            aiListening: "వాయిస్-ఫస్ట్ ఇంటెలిజెన్స్",
+            marketPulse: "రియల్-టైమ్ మార్కెట్ పల్స్",
+            chooseLanguage: "మీ భాషలో మాట్లాడండి"
+      }
+  };
+
+  setTimeout(function() {
+      if (typeof translations !== 'undefined') {
+          for (const lang in indexTranslations) {
+              if (translations[lang]) {
+                  translations[lang] = {...translations[lang], ...indexTranslations[lang]};
+              } else {
+                  translations[lang] = indexTranslations[lang];
+              }
+          }
+          if (typeof currentLanguage !== 'undefined') {
+              document.querySelectorAll('[data-translate]').forEach(function(element) {
+                  const key = element.getAttribute('data-translate');
+                  if (translations[currentLanguage] && translations[currentLanguage][key]) {
+                      if (element.tagName === 'INPUT') element.placeholder = translations[currentLanguage][key];
+                      else element.textContent = translations[currentLanguage][key];
+                  }
+              });
+          }
+      }
+  }, 100);
 </script>
 {% endblock %}

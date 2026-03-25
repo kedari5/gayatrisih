@@ -1,116 +1,105 @@
 {% extends "base.html" %}
 
-{% block title %}Login - Krishi Sakhi{% endblock %}
+{% block title %}Return to the Fields - Krishi Sakhi{% endblock %}
 
 {% block content %}
-<div class="row justify-content-center">
-    <div class="col-md-6 col-lg-5">
-        <div class="card shadow">
-            <div class="card-header text-center bg-success text-white">
-                <h4><i class="fas fa-sign-in-alt me-2"></i><span data-translate="login">Login</span></h4>
+<div class="min-h-[calc(100vh-16rem)] flex items-center justify-center px-4 py-12">
+    <div class="w-full max-w-md animate-fade-in">
+        <!-- Brand / Identity -->
+        <div class="text-center mb-10">
+            <div class="w-20 h-20 bg-gradient-to-br from-forest to-moss rounded-3xl flex items-center justify-center shadow-xl mx-auto mb-6 transform rotate-6">
+                <i class="fas fa-leaf text-cream text-3xl"></i>
             </div>
-            <div class="card-body">
-                <form method="POST">
-                    <div class="mb-3">
-                        <label for="phone_number" class="form-label" data-translate="phoneNumber">Phone Number</label>
-                        <input type="tel" class="form-control" id="phone_number" name="phone_number" required 
-                               data-translate="phonePlaceholder">
+            <h1 class="font-serif text-4xl text-forest" data-translate="login">Welcome Back</h1>
+            <p class="text-forest/60 mt-2">{{ gettext('Continue your journey in nourishing the world.') }}</p>
+        </div>
+
+        <!-- Login Card -->
+        <div class="glass-card p-10 rounded-[40px] border-white/60 shadow-2xl relative overflow-hidden">
+            <!-- Pattern Decor -->
+            <div class="absolute -right-10 -bottom-10 opacity-[0.03] pointer-events-none">
+                <i class="fas fa-wheat-awn text-[12rem]"></i>
+            </div>
+
+            <form method="POST" class="space-y-6 relative z-10">
+                <div class="space-y-2">
+                    <label for="phone_number" class="text-xs font-bold text-forest/40 uppercase tracking-widest px-2" data-translate="phoneNumber">Phone Number</label>
+                    <div class="relative">
+                        <i class="fas fa-phone absolute left-5 top-1/2 -translate-y-1/2 text-forest/30"></i>
+                        <input type="tel" id="phone_number" name="phone_number" required 
+                               class="w-full pl-12 pr-6 py-4 bg-white/50 border border-forest/10 rounded-2xl focus:ring-4 focus:ring-forest/5 focus:border-forest outline-none transition-all"
+                               placeholder="Enter your phone number" data-translate="phonePlaceholder">
                     </div>
-                    
-                    <div class="mb-3">
-                        <label for="password" class="form-label" data-translate="password">Password</label>
-                        <input type="password" class="form-control" id="password" name="password" required 
-                               data-translate="passwordPlaceholder">
-                    </div>
-                    
-                    <div class="d-grid">
-                        <button type="submit" class="btn btn-success btn-lg">
-                            <i class="fas fa-sign-in-alt me-2"></i><span data-translate="loginButton">Login</span>
-                        </button>
-                    </div>
-                </form>
-                
-                <div class="text-center mt-3">
-                    <p data-translate="noAccount">Don't have an account? <a href="{{ url_for('signup') }}" data-translate="signupLink">Sign up here</a></p>
                 </div>
+                
+                <div class="space-y-2">
+                    <label for="password" class="text-xs font-bold text-forest/40 uppercase tracking-widest px-2" data-translate="password">Password</label>
+                    <div class="relative">
+                        <i class="fas fa-lock absolute left-5 top-1/2 -translate-y-1/2 text-forest/30"></i>
+                        <input type="password" id="password" name="password" required 
+                               class="w-full pl-12 pr-6 py-4 bg-white/50 border border-forest/10 rounded-2xl focus:ring-4 focus:ring-forest/5 focus:border-forest outline-none transition-all"
+                               placeholder="Enter your password" data-translate="passwordPlaceholder">
+                    </div>
+                </div>
+                
+                <div class="pt-4">
+                    <button type="submit" class="w-full py-5 bg-forest text-cream font-bold rounded-2xl hover:bg-moss transition-all shadow-xl shadow-forest/20 transform active:scale-95 group">
+                        <span data-translate="loginButton">Access Dashboard</span>
+                        <i class="fas fa-arrow-right ms-2 group-hover:translate-x-1 transition-transform"></i>
+                    </button>
+                </div>
+            </form>
+            
+            <div class="text-center mt-8 pt-8 border-t border-forest/5">
+                <p class="text-sm text-forest/60" data-translate="noAccount">
+                    Don't have an account? 
+                    <a href="{{ url_for('signup') }}" class="text-forest font-bold hover:underline" data-translate="signupLink">Join our Community</a>
+                </p>
             </div>
         </div>
     </div>
 </div>
+
+<style>
+    .animate-fade-in { animation: fadeIn 0.8s ease-out; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+</style>
+
 {% endblock %}
 
 {% block scripts %}
 <script>
-    // Add login specific translations
     const loginTranslations = {
         en: {
-            login: "Login",
-            phoneNumber: "Phone Number",
-            phonePlaceholder: "Enter your phone number",
-            password: "Password",
-            passwordPlaceholder: "Enter your password",
-            loginButton: "Login",
-            noAccount: "Don't have an account?",
-            signupLink: "Sign up here"
+            login: "Welcome Back",
+            loginButton: "Access Dashboard",
+            signupLink: "Join our Community"
         },
         ml: {
-            login: "ലോഗിൻ",
-            phoneNumber: "ഫോൺ നമ്പർ",
-            phonePlaceholder: "നിങ്ങളുടെ ഫോൺ നമ്പർ നൽകുക",
-            password: "പാസ്‌വേഡ്",
-            passwordPlaceholder: "നിങ്ങളുടെ പാസ്‌വേഡ് നൽകുക",
-            loginButton: "ലോഗിൻ",
-            noAccount: "അക്കൗണ്ട് ഇല്ലേ?",
-            signupLink: "ഇവിടെ സൈൻ അപ്പ് ചെയ്യുക"
+            login: "സ്വാഗതം",
+            loginButton: "പ്രവേശിക്കുക",
+            signupLink: "ഇവിടെ ചേരുക"
         },
         hi: {
-            login: "लॉगिन",
-            phoneNumber: "फोन नंबर",
-            phonePlaceholder: "अपना फोन नंबर दर्ज करें",
-            password: "पासवर्ड",
-            passwordPlaceholder: "अपना पासवर्ड दर्ज करें",
-            loginButton: "लॉगिन",
-            noAccount: "खाता नहीं है?",
-            signupLink: "यहां साइन अप करें"
+            login: "आपका स्वागत है",
+            loginButton: "डैशबोर्ड में प्रवेश करें",
+            signupLink: "हमारे साथ जुड़ें"
         },
         ta: {
-            login: "உள்நுழைய",
-            phoneNumber: "தொலைபேசி எண்",
-            phonePlaceholder: "உங்கள் தொலைபேசி எண்ணை உள்ளிடவும்",
-            password: "கடவுச்சொல்",
-            passwordPlaceholder: "உங்கள் கடவுச்சொல்லை உள்ளிடவும்",
-            loginButton: "உள்நுழைய",
-            noAccount: "கணக்கு இல்லையா?",
-            signupLink: "இங்கே பதிவு செய்யவும்"
+            login: "மீண்டும் வருக",
+            loginButton: "டாஷ்போர்டை அணுகவும்",
+            signupLink: "எங்கள் சமூகத்தில் சேருங்கள்"
         },
         te: {
-            login: "లాగిన్",
-            phoneNumber: "ఫోన్ నంబర్",
-            phonePlaceholder: "మీ ఫోన్ నంబర్‌ని నమోదు చేయండి",
-            password: "పాస్‌వర్డ్",
-            passwordPlaceholder: "మీ పాస్‌వర్డ్‌ని నమోదు చేయండి",
-            loginButton: "లాగిన్",
-            noAccount: "ఖాతా లేదా?",
-            signupLink: "ఇక్కడ సైన్ అప్ చేయండి"
-        },
-        kn: {
-            login: "ಲಾಗಿನ್",
-            phoneNumber: "ಫೋನ್ ನಂಬರ್",
-            phonePlaceholder: "ನಿಮ್ಮ ಫೋನ್ ನಂಬರ್ ನಮೂದು ಮಾಡಿ",
-            password: "ಪಾಸ್ವರ್ಡ್",
-            passwordPlaceholder: "ನಿಮ್ಮ ಪಾಸ್ವರ್ಡ್ ನಮೂದು ಮಾಡಿ",
-            loginButton: "ಲಾಗಿನ್",
-            noAccount: "ಖಾತೆ ಇಲ್ಲವೇ?",
-            signupLink: "ಇಲ್ಲಿ ಸೈನ್ ಅಪ್ ಮಾಡಿ"
+            login: "మళ్ళీ స్వాగతం",
+            loginButton: "డాష్‌బోర్డ్ ప్రవేశం",
+            signupLink: "మాతో చేరండి"
         }
     };
 
-    // Merge login translations with base translations
     document.addEventListener('DOMContentLoaded', function() {
-        // Wait for base translations to load
         setTimeout(function() {
             if (typeof translations !== 'undefined') {
-                // Merge translations
                 for (const lang in loginTranslations) {
                     if (translations[lang]) {
                         translations[lang] = {...translations[lang], ...loginTranslations[lang]};
@@ -118,8 +107,6 @@
                         translations[lang] = loginTranslations[lang];
                     }
                 }
-                
-                // Apply translations if language is already set
                 if (typeof currentLanguage !== 'undefined') {
                     document.querySelectorAll('[data-translate]').forEach(function(element) {
                         const key = element.getAttribute('data-translate');

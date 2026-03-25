@@ -1,147 +1,181 @@
 {% extends "base.html" %}
 
-{% block title %}Sign Up - Krishi Sakhi{% endblock %}
+{% block title %}Join the Harvest - Krishi Sakhi{% endblock %}
 
 {% block content %}
-<div class="row justify-content-center">
-    <div class="col-md-6 col-lg-5">
-        <div class="card shadow">
-            <div class="card-header text-center bg-success text-white">
-                <h4 id="form-title"><i class="fas fa-user-plus me-2"></i>Create Account</h4>
+<div class="min-h-[calc(100vh-16rem)] flex items-center justify-center px-4 py-12">
+    <div class="w-full max-w-2xl animate-fade-in">
+        <!-- Brand / Identity -->
+        <div class="text-center mb-10">
+            <div class="w-20 h-20 bg-gradient-to-br from-forest to-moss rounded-3xl flex items-center justify-center shadow-xl mx-auto mb-6 transform -rotate-6">
+                <i class="fas fa-user-plus text-cream text-3xl"></i>
             </div>
-            <div class="card-body">
-                <form method="POST">
+            <h1 class="font-serif text-4xl text-forest" id="form-title" data-translate="signupTitle">Create Your Legacy</h1>
+            <p class="text-forest/60 mt-2">{{ gettext('Begin your journey with Sakhi. Let\'s grow together.') }}</p>
+        </div>
+
+        <!-- Signup Card -->
+        <div class="glass-card p-10 rounded-[40px] border-white/60 shadow-2xl relative overflow-hidden">
+            <!-- Pattern Decor -->
+            <div class="absolute -left-10 -bottom-10 opacity-[0.03] pointer-events-none">
+                <i class="fas fa-tree text-[15rem]"></i>
+            </div>
+
+            <form method="POST" class="relative z-10 space-y-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <!-- Name -->
-                    <div class="mb-3">
-                        <label for="name" class="form-label" id="label-name">Name</label>
-                        <div class="input-group">
-                            <input type="text" class="form-control" id="name" name="name" required>
-                            <button type="button" class="btn btn-outline-secondary" onclick="startVoiceInput('name')">
-                                🎤
+                    <div class="space-y-2">
+                        <label for="name" class="text-xs font-bold text-forest/40 uppercase tracking-widest px-2" id="label-name">Full Name</label>
+                        <div class="relative group">
+                            <i class="fas fa-user absolute left-5 top-1/2 -translate-y-1/2 text-forest/30"></i>
+                            <input type="text" id="name" name="name" required 
+                                   class="w-full pl-12 pr-14 py-4 bg-white/50 border border-forest/10 rounded-2xl focus:ring-4 focus:ring-forest/5 focus:border-forest outline-none transition-all"
+                                   placeholder="Your Name">
+                            <button type="button" onclick="startVoiceInput('name')" 
+                                    class="absolute right-3 top-1/2 -translate-y-1/2 w-10 h-10 flex items-center justify-center rounded-xl text-forest/30 hover:text-forest hover:bg-forest/5 transition-all">
+                                <i class="fas fa-microphone"></i>
                             </button>
                         </div>
                     </div>
 
                     <!-- Phone Number -->
-                    <div class="mb-3">
-                        <label for="phone_number" class="form-label" id="label-phone">Phone Number</label>
-                        <div class="input-group">
-                            <input type="tel" class="form-control" id="phone_number" name="phone_number" required>
-                            <button type="button" class="btn btn-outline-secondary" onclick="startVoiceInput('phone_number')">
-                                🎤
+                    <div class="space-y-2">
+                        <label for="phone_number" class="text-xs font-bold text-forest/40 uppercase tracking-widest px-2" id="label-phone">Phone Number</label>
+                        <div class="relative group">
+                            <i class="fas fa-phone absolute left-5 top-1/2 -translate-y-1/2 text-forest/30"></i>
+                            <input type="tel" id="phone_number" name="phone_number" required 
+                                   class="w-full pl-12 pr-14 py-4 bg-white/50 border border-forest/10 rounded-2xl focus:ring-4 focus:ring-forest/5 focus:border-forest outline-none transition-all"
+                                   placeholder="Phone Number">
+                            <button type="button" onclick="startVoiceInput('phone_number')" 
+                                    class="absolute right-3 top-1/2 -translate-y-1/2 w-10 h-10 flex items-center justify-center rounded-xl text-forest/30 hover:text-forest hover:bg-forest/5 transition-all">
+                                <i class="fas fa-microphone"></i>
                             </button>
                         </div>
                     </div>
-                    
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <!-- Password -->
-                    <div class="mb-3">
-                        <label for="password" class="form-label" id="label-password">Password</label>
-                        <div class="input-group">
-                            <input type="password" class="form-control" id="password" name="password" required>
-                            <button type="button" class="btn btn-outline-secondary" onclick="startVoiceInput('password')">
-                                🎤
+                    <div class="space-y-2">
+                        <label for="password" class="text-xs font-bold text-forest/40 uppercase tracking-widest px-2" id="label-password">Security Password</label>
+                        <div class="relative group">
+                            <i class="fas fa-lock absolute left-5 top-1/2 -translate-y-1/2 text-forest/30"></i>
+                            <input type="password" id="password" name="password" required 
+                                   class="w-full pl-12 pr-14 py-4 bg-white/50 border border-forest/10 rounded-2xl focus:ring-4 focus:ring-forest/5 focus:border-forest outline-none transition-all"
+                                   placeholder="Create Password">
+                            <button type="button" onclick="startVoiceInput('password')" 
+                                    class="absolute right-3 top-1/2 -translate-y-1/2 w-10 h-10 flex items-center justify-center rounded-xl text-forest/30 hover:text-forest hover:bg-forest/5 transition-all">
+                                <i class="fas fa-microphone"></i>
                             </button>
                         </div>
                     </div>
                     
                     <!-- Preferred Language -->
-                    <div class="mb-3">
-                        <label for="language_preference" class="form-label" id="label-language">Preferred Language</label>
-                        <select class="form-select" id="language_preference" name="language_preference" onchange="changeLanguage(this.value)" required>
-                            {% for code, name in languages.items() %}
-                            <option value="{{ code }}">{{ name }}</option>
-                            {% endfor %}
-                        </select>
+                    <div class="space-y-2">
+                        <label for="language_preference" class="text-xs font-bold text-forest/40 uppercase tracking-widest px-2" id="label-language">Native Language</label>
+                        <div class="relative">
+                            <i class="fas fa-globe absolute left-5 top-1/2 -translate-y-1/2 text-forest/30 z-10"></i>
+                            <select id="language_preference" name="language_preference" onchange="changeLanguage(this.value)" required 
+                                    class="w-full pl-12 pr-6 py-4 bg-white/50 border border-forest/10 rounded-2xl focus:ring-4 focus:ring-forest/5 focus:border-forest outline-none transition-all appearance-none cursor-pointer relative z-0">
+                                {% for code, name in languages.items() %}
+                                <option value="{{ code }}">{{ name }}</option>
+                                {% endfor %}
+                            </select>
+                            <i class="fas fa-chevron-down absolute right-5 top-1/2 -translate-y-1/2 text-forest/30 pointer-events-none"></i>
+                        </div>
                     </div>
-
-                    <!-- Hidden Location -->
-                    <input type="hidden" id="location" name="location">
-
-                    <!-- Submit -->
-                    <div class="d-grid">
-                        <button type="submit" class="btn btn-success btn-lg" id="btn-signup">
-                            <i class="fas fa-user-plus me-2"></i>Sign Up
-                        </button>
-                    </div>
-                </form>
-                
-                <div class="text-center mt-3">
-                    <p id="login-text">Already have an account? <a href="{{ url_for('login') }}" id="login-link">Login here</a></p>
                 </div>
+
+                <input type="hidden" id="location" name="location">
+
+                <div class="pt-6">
+                    <button type="submit" id="btn-signup" class="w-full py-5 bg-forest text-cream font-bold rounded-2xl hover:bg-moss transition-all shadow-xl shadow-forest/20 transform active:scale-95 group">
+                        Plant Your Seed (Join)
+                        <i class="fas fa-leaf ms-2 group-hover:rotate-12 transition-transform"></i>
+                    </button>
+                </div>
+            </form>
+            
+            <div class="text-center mt-8 pt-8 border-t border-forest/5">
+                <p id="login-text" class="text-sm text-forest/60">
+                    Already have an account? 
+                    <a href="{{ url_for('login') }}" id="login-link" class="text-forest font-bold hover:underline">Log in to your Farm</a>
+                </p>
             </div>
         </div>
     </div>
 </div>
 
-<!-- JS for Language Switch + Location + Voice -->
+<style>
+    .animate-fade-in { animation: fadeIn 0.8s ease-out; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+</style>
+
 <script>
-    const translations = {
+    const signupTranslations = {
         "en": {
-            "title": "Create Account",
-            "name": "Name",
+            "title": "Create Your Legacy",
+            "name": "Full Name",
             "phone": "Phone Number",
-            "password": "Password",
-            "language": "Preferred Language",
-            "signup": "Sign Up",
-            "login": "Already have an account? <a href='{{ url_for('login') }}'>Login here</a>",
-            "tts": "Please enter your details. First, say your name. Then phone number. Then password. Finally, select your language."
+            "password": "Security Password",
+            "language": "Native Language",
+            "signup": "Plant Your Seed (Join)",
+            "login": "Already have an account? <a href='{{ url_for('login') }}' class='text-forest font-bold'>Log in to your Farm</a>",
+            "tts": "Welcome to Sakhi. Please share your name, phone number, and choose a password to begin."
         },
         "hi": {
             "title": "खाता बनाएँ",
-            "name": "नाम",
+            "name": "पूरा नाम",
             "phone": "फ़ोन नंबर",
             "password": "पासवर्ड",
             "language": "भाषा चुनें",
-            "signup": "साइन अप करें",
-            "login": "पहले से खाता है? <a href='{{ url_for('login') }}'>यहाँ लॉगिन करें</a>",
-            "tts": "कृपया अपनी जानकारी दर्ज करें। पहले नाम बताइए, फिर फोन नंबर, फिर पासवर्ड और अंत में भाषा चुनें।"
+            "signup": "शामिल हों",
+            "login": "क्या आपके पास पहले से खाता है? <a href='{{ url_for('login') }}' class='text-forest font-bold'>यहाँ लॉगिन करें</a>",
+            "tts": "सखी में आपका स्वागत है। अपनी जानकारी दर्ज करें।"
         },
         "te": {
             "title": "ఖాతా సృష్టించండి",
-            "name": "పేరు",
+            "name": "పూర్తి పేరు",
             "phone": "ఫోన్ నంబర్",
             "password": "పాస్‌వర్డ్",
             "language": "భాషను ఎంచుకోండి",
-            "signup": "సైన్ అప్ చేయండి",
-            "login": "ఖాతా ఉందా? <a href='{{ url_for('login') }}'>ఇక్కడ లాగిన్ చేయండి</a>",
-            "tts": "దయచేసి మీ వివరాలు నమోదు చేయండి. ముందుగా పేరు, తర్వాత ఫోన్ నంబర్, తర్వాత పాస్‌వర్డ్ మరియు చివరగా భాషను ఎంచుకోండి."
+            "signup": "చేరండి",
+            "login": "ఖాతా ఉందా? <a href='{{ url_for('login') }}' class='text-forest font-bold'>ఇక్కడ లాగిన్ చేయండి</a>",
+            "tts": "సఖికి స్వాగతం. మీ వివరాలు నమోదు చేయండి."
         },
         "ml": {
             "title": "അക്കൗണ്ട് സൃഷ്ടിക്കുക",
-            "name": "പേര്",
+            "name": "പൂർണ്ണ നാമം",
             "phone": "ഫോൺ നമ്പർ",
             "password": "പാസ്‌വേഡ്",
             "language": "ഭാഷ തിരഞ്ഞെടുക്കുക",
-            "signup": "സൈൻ അപ്പ് ചെയ്യുക",
-            "login": "അക്കൗണ്ട് ഉണ്ടോ? <a href='{{ url_for('login') }}'>ഇവിടെ ലോഗിൻ ചെയ്യുക</a>",
-            "tts": "ദയവായി നിങ്ങളുടെ വിവരങ്ങൾ നൽകുക. ആദ്യം പേര്, പിന്നീട് ഫോൺ നമ്പർ, പിന്നെ പാസ്‌വേഡ്, അവസാനം ഭാഷ തിരഞ്ഞെടുക്കുക."
+            "signup": "ചേരുക",
+            "login": "അക്കൗണ്ട് ഉണ്ടോ? <a href='{{ url_for('login') }}' class='text-forest font-bold'>ലോഗിൻ ചെയ്യുക</a>",
+            "tts": "സഖിയിലേക്ക് സ്വാഗതം. നിങ്ങളുടെ വിവരങ്ങൾ നൽകുക."
         }
     };
 
     function changeLanguage(lang) {
-        const t = translations[lang] || translations["en"];
+        const t = signupTranslations[lang] || signupTranslations["en"];
         document.getElementById("form-title").innerText = t.title;
         document.getElementById("label-name").innerText = t.name;
         document.getElementById("label-phone").innerText = t.phone;
         document.getElementById("label-password").innerText = t.password;
         document.getElementById("label-language").innerText = t.language;
-        document.getElementById("btn-signup").innerText = t.signup;
+        document.getElementById("btn-signup").innerHTML = t.signup + ' <i class="fas fa-leaf ms-2 group-hover:rotate-12 transition-transform"></i>';
         document.getElementById("login-text").innerHTML = t.login;
 
         speakText(t.tts, lang);
     }
 
-    // Auto-detect location
     window.onload = function() {
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(function(pos) {
                 document.getElementById("location").value = pos.coords.latitude + "," + pos.coords.longitude;
             });
         }
-        speakText(translations["en"].tts, "en");
     }
 
-    // Text-to-Speech
     function speakText(text, lang) {
         let utterance = new SpeechSynthesisUtterance(text);
         if (lang === "hi") utterance.lang = "hi-IN";
@@ -151,17 +185,26 @@
         speechSynthesis.speak(utterance);
     }
 
-    // Voice input for any field
     function startVoiceInput(fieldId) {
         if (!('webkitSpeechRecognition' in window)) {
             alert("Your browser does not support voice input.");
             return;
         }
         const recognition = new webkitSpeechRecognition();
-        recognition.lang = document.getElementById("language_preference").value + "-IN";
+        const currentLang = document.getElementById("language_preference").value;
+        recognition.lang = currentLang + "-IN";
+        
+        const btn = event.currentTarget;
+        btn.classList.add('text-emerald-500', 'animate-pulse');
+        
         recognition.onresult = function(event) {
             document.getElementById(fieldId).value = event.results[0][0].transcript;
         }
+        
+        recognition.onend = () => {
+            btn.classList.remove('text-emerald-500', 'animate-pulse');
+        };
+        
         recognition.start();
     }
 </script>

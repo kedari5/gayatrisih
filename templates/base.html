@@ -4,21 +4,62 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Krishi Sakhi - AI Farming Assistant{% endblock %}</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        forest: '#1B4332',
+                        sage: '#B7B7A4',
+                        earth: '#6B705C',
+                        moss: '#2D6A4F',
+                        cream: '#F4F1DE',
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        serif: ['Playfair Display', 'serif'],
+                    },
+                }
+            }
+        }
+    </script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
     <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">
     <style>
+        .glass-card {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        .organic-leaf {
+            border-radius: 60px 0px 60px 0px;
+        }
+        .squircle {
+            border-radius: 20px;
+        }
+        .text-gradient {
+            background: linear-gradient(135deg, #1B4332, #2D6A4F);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
         .language-notification {
             position: fixed;
             bottom: 20px;
             right: 20px;
             z-index: 1050;
             min-width: 250px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
         }
     </style>
 </head>
-<body>
+<body class="bg-cream/30 font-sans text-forest min-h-screen">
     <!-- Hidden element to pass authentication data to JavaScript -->
     <div id="auth-status" 
          data-authenticated="{% if current_user.is_authenticated %}true{% else %}false{% endif %}" 
@@ -27,65 +68,88 @@
     </div>
     
     <!-- Navigation -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-success">
-        <div class="container">
-            <a class="navbar-brand" href="{{ url_for('dashboard') if current_user.is_authenticated else url_for('index') }}">
-                <i class="fas fa-seedling me-2"></i>Krishi Sakhi
+    <nav class="sticky top-0 z-50 transition-all duration-300 glass-card mx-4 mt-4 squircle">
+        <div class="container mx-auto px-6 py-3 flex items-center justify-between">
+            <a class="flex items-center space-x-2 group" href="{{ url_for('dashboard') if current_user.is_authenticated else url_for('index') }}">
+                <div class="w-10 h-10 bg-forest rounded-full flex items-center justify-center transition-transform group-hover:rotate-12">
+                    <i class="fas fa-seedling text-cream text-lg"></i>
+                </div>
+                <span class="font-serif text-2xl font-bold tracking-tight text-forest group-hover:text-moss transition-colors">Krishi Sakhi</span>
             </a>
             
             {% if current_user.is_authenticated %}
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
+            <!-- Mobile Menu Toggle -->
+            <button class="md:hidden text-forest hover:text-moss focus:outline-none" id="mobile-menu-button">
+                <i class="fas fa-bars text-xl"></i>
             </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('dashboard') }}"><i class="fas fa-home me-1"></i><span data-translate="dashboard">Dashboard</span></a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('chat') }}"><i class="fas fa-comments me-1"></i><span data-translate="chat">Chat Assistant</span></a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('weather') }}"><i class="fas fa-cloud-sun me-1"></i><span data-translate="weather">Weather</span></a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('market_prices') }}"><i class="fas fa-chart-line me-1"></i><span data-translate="market">Market Prices</span></a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('activities') }}"><i class="fas fa-clipboard-list me-1"></i><span data-translate="activities">Activities</span></a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('profile') }}"><i class="fas fa-user me-1"></i><span data-translate="profile">Profile</span></a>
-                    </li>
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
-                            <i class="fas fa-globe me-1"></i><span data-translate="language">Language</span>
-                        </a>
-                        <ul class="dropdown-menu">
-                            <li><a class="dropdown-item language-change" href="#" data-lang="en">English</a></li>
-                            <li><a class="dropdown-item language-change" href="#" data-lang="ml">മലയാളം</a></li>
-                            <li><a class="dropdown-item language-change" href="#" data-lang="hi">हिन्दी</a></li>
-                            <li><a class="dropdown-item language-change" href="#" data-lang="ta">தமிழ்</a></li>
-                            <li><a class="dropdown-item language-change" href="#" data-lang="te">తెలుగు</a></li>
-                        </ul>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('logout') }}"><i class="fas fa-sign-out-alt me-1"></i><span data-translate="logout">Logout</span></a>
-                    </li>
-                </ul>
+
+            <!-- Desktop Menu -->
+            <div class="hidden md:flex items-center space-x-1 lg:space-x-4">
+                <a class="px-3 py-2 rounded-xl text-sm transition-colors flex items-center {% if request.endpoint == 'dashboard' %}text-forest font-bold bg-forest/10{% else %}text-forest/60 font-medium hover:text-forest hover:bg-forest/5{% endif %}" href="{{ url_for('dashboard') }}">
+                    <i class="fas fa-home me-2 {% if request.endpoint == 'dashboard' %}opacity-100{% else %}opacity-70{% endif %}"></i><span data-translate="dashboard">Dashboard</span>
+                </a>
+                <a class="px-3 py-2 rounded-xl text-sm transition-colors flex items-center {% if request.endpoint == 'chat' %}text-forest font-bold bg-forest/10{% else %}text-forest/60 font-medium hover:text-forest hover:bg-forest/5{% endif %}" href="{{ url_for('chat') }}">
+                    <i class="fas fa-comments me-2 {% if request.endpoint == 'chat' %}opacity-100{% else %}opacity-70{% endif %}"></i><span data-translate="chat">Chat Assistant</span>
+                </a>
+                <a class="px-3 py-2 rounded-xl text-sm transition-colors flex items-center {% if request.endpoint == 'weather' %}text-forest font-bold bg-forest/10{% else %}text-forest/60 font-medium hover:text-forest hover:bg-forest/5{% endif %}" href="{{ url_for('weather') }}">
+                    <i class="fas fa-cloud-sun me-2 {% if request.endpoint == 'weather' %}opacity-100{% else %}opacity-70{% endif %}"></i><span data-translate="weather">Weather</span>
+                </a>
+                <a class="px-3 py-2 rounded-xl text-sm transition-colors flex items-center {% if request.endpoint == 'market_prices' %}text-forest font-bold bg-forest/10{% else %}text-forest/60 font-medium hover:text-forest hover:bg-forest/5{% endif %}" href="{{ url_for('market_prices') }}">
+                    <i class="fas fa-chart-line me-2 {% if request.endpoint == 'market_prices' %}opacity-100{% else %}opacity-70{% endif %}"></i><span data-translate="market">Market Prices</span>
+                </a>
+                <a class="px-3 py-2 rounded-xl text-sm transition-colors flex items-center {% if request.endpoint == 'activities' %}text-forest font-bold bg-forest/10{% else %}text-forest/60 font-medium hover:text-forest hover:bg-forest/5{% endif %}" href="{{ url_for('activities') }}">
+                    <i class="fas fa-clipboard-list me-2 {% if request.endpoint == 'activities' %}opacity-100{% else %}opacity-70{% endif %}"></i><span data-translate="activities">Activities</span>
+                </a>
+                <a class="px-3 py-2 rounded-xl text-sm transition-colors flex items-center {% if request.endpoint == 'profile' %}text-forest font-bold bg-forest/10{% else %}text-forest/60 font-medium hover:text-forest hover:bg-forest/5{% endif %}" href="{{ url_for('profile') }}">
+                    <i class="fas fa-user me-2 {% if request.endpoint == 'profile' %}opacity-100{% else %}opacity-70{% endif %}"></i><span data-translate="profile">Profile</span>
+                </a>
+                
+                <!-- Language Dropdown -->
+                <div class="relative group" id="language-dropdown">
+                    <button class="px-3 py-2 rounded-xl text-sm font-medium text-forest/60 hover:text-forest hover:bg-forest/5 transition-colors flex items-center focus:outline-none">
+                        <i class="fas fa-globe me-2 opacity-70"></i><span data-translate="language">Language</span>
+                        <i class="fas fa-chevron-down ms-1 text-[10px]"></i>
+                    </button>
+                    <div class="absolute right-0 mt-2 w-48 py-2 bg-white rounded-2xl shadow-xl border border-forest/5 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform translate-y-2 group-hover:translate-y-0 text-forest">
+                        <a class="block px-4 py-2 text-sm hover:bg-forest/5 language-change" href="#" data-lang="en">English</a>
+                        <a class="block px-4 py-2 text-sm hover:bg-forest/5 language-change" href="#" data-lang="ml">മലയാളം</a>
+                        <a class="block px-4 py-2 text-sm hover:bg-forest/5 language-change" href="#" data-lang="hi">हिन्दी</a>
+                        <a class="block px-4 py-2 text-sm hover:bg-forest/5 language-change" href="#" data-lang="ta">தமிழ்</a>
+                        <a class="block px-4 py-2 text-sm hover:bg-forest/5 language-change" href="#" data-lang="te">తెలుగు</a>
+                    </div>
+                </div>
+
+                <a class="ms-2 px-4 py-2 bg-forest text-cream rounded-xl text-sm font-medium hover:bg-moss transition-all shadow-lg shadow-forest/20 flex items-center" href="{{ url_for('logout') }}">
+                    <i class="fas fa-sign-out-alt me-2"></i><span data-translate="logout">Logout</span>
+                </a>
             </div>
             {% endif %}
         </div>
+        
+        <!-- Mobile Dropdown -->
+        {% if current_user.is_authenticated %}
+        <div class="md:hidden hidden border-t border-forest/5 px-6 py-4 space-y-2" id="mobile-menu">
+            <a class="block py-2 px-3 rounded-xl text-sm transition-colors {% if request.endpoint == 'dashboard' %}text-forest font-bold bg-forest/5{% else %}text-forest/60 font-medium hover:text-forest hover:bg-forest/5{% endif %}" href="{{ url_for('dashboard') }}">Dashboard</a>
+            <a class="block py-2 px-3 rounded-xl text-sm transition-colors {% if request.endpoint == 'chat' %}text-forest font-bold bg-forest/5{% else %}text-forest/60 font-medium hover:text-forest hover:bg-forest/5{% endif %}" href="{{ url_for('chat') }}">Chat Assistant</a>
+            <a class="block py-2 px-3 rounded-xl text-sm transition-colors {% if request.endpoint == 'weather' %}text-forest font-bold bg-forest/5{% else %}text-forest/60 font-medium hover:text-forest hover:bg-forest/5{% endif %}" href="{{ url_for('weather') }}">Weather</a>
+            <a class="block py-2 px-3 rounded-xl text-sm transition-colors {% if request.endpoint == 'market_prices' %}text-forest font-bold bg-forest/5{% else %}text-forest/60 font-medium hover:text-forest hover:bg-forest/5{% endif %}" href="{{ url_for('market_prices') }}">Market Prices</a>
+            <a class="block py-2 px-3 rounded-xl text-sm transition-colors {% if request.endpoint == 'activities' %}text-forest font-bold bg-forest/5{% else %}text-forest/60 font-medium hover:text-forest hover:bg-forest/5{% endif %}" href="{{ url_for('activities') }}">Activities</a>
+            <a class="block py-2 px-3 rounded-xl text-sm transition-colors {% if request.endpoint == 'profile' %}text-forest font-bold bg-forest/5{% else %}text-forest/60 font-medium hover:text-forest hover:bg-forest/5{% endif %}" href="{{ url_for('profile') }}">Profile</a>
+            <a class="block py-2 px-3 rounded-xl text-sm font-medium text-red-600 hover:bg-red-50" href="{{ url_for('logout') }}">Logout</a>
+        </div>
+        {% endif %}
     </nav>
 
     <!-- Flash Messages -->
-    <div class="container mt-3">
+    <div class="container mx-auto px-6 mt-6">
         {% with messages = get_flashed_messages(with_categories=true) %}
             {% if messages %}
                 {% for category, message in messages %}
-                <div class="alert alert-{{ 'danger' if category == 'error' else category }} alert-dismissible fade show">
+                <div class="p-4 mb-4 rounded-2xl {% if category == 'error' %}bg-red-100 text-red-700{% else %}bg-green-100 text-green-700{% endif %} flex justify-between items-center animate-fade-in shadow-sm">
                     {{ message }}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    <button type="button" class="ms-2 focus:outline-none opacity-50 hover:opacity-100" onclick="this.parentElement.remove()">
+                        <i class="fas fa-times"></i>
+                    </button>
                 </div>
                 {% endfor %}
             {% endif %}
@@ -93,14 +157,17 @@
     </div>
 
     <!-- Main Content -->
-    <div class="container mt-4">
+    <main class="container mx-auto px-4 md:px-6">
         {% block content %}{% endblock %}
-    </div>
+    </main>
 
     <!-- Footer -->
-    <footer class="bg-light text-center text-muted py-3 mt-5">
-        <div class="container">
-            <p>&copy; 2025 Krishi Sakhi - <span data-translate="footer">Your Digital Farming Companion</span></p>
+    <footer class="mt-20 py-10 border-t border-forest/10 text-center">
+        <div class="container mx-auto px-6">
+            <div class="w-12 h-12 bg-forest/5 rounded-full flex items-center justify-center mx-auto mb-4">
+                <i class="fas fa-leaf text-forest/40"></i>
+            </div>
+            <p class="text-sm text-forest/60">&copy; 2025 Krishi Sakhi - <span data-translate="footer">Your Digital Farming Companion</span></p>
         </div>
     </footer>
 
@@ -264,5 +331,39 @@
     </script>
     
     {% block scripts %}{% endblock %}
+
+    <!-- Sakhi Seed Interaction -->
+    <div id="sakhi-seed-container" class="fixed bottom-8 right-8 z-[100] group">
+        <a href="{{ url_for('chat') }}" id="sakhi-seed" class="relative block w-16 h-16 flex items-center justify-center">
+            <!-- Pulsing Aura -->
+            <div class="absolute inset-0 bg-forest/20 rounded-full animate-ping group-hover:hidden"></div>
+            
+            <!-- The Seed/Leaf -->
+            <div id="seed-body" class="w-full h-full bg-gradient-to-br from-forest to-moss text-cream flex items-center justify-center shadow-2xl transition-all duration-500 hover:scale-110" 
+                 style="border-radius: 60% 40% 70% 30% / 40% 60% 30% 70%;">
+                <i class="fas fa-seedling text-2xl transform group-hover:rotate-12 transition-transform"></i>
+            </div>
+            
+            <!-- Tooltip/Label -->
+            <div class="absolute right-full mr-4 top-1/2 -translate-y-1/2 px-4 py-2 bg-forest text-cream text-sm font-bold rounded-xl opacity-0 group-hover:opacity-100 transition-all translate-x-4 group-hover:translate-x-0 whitespace-nowrap shadow-xl pointer-events-none">
+                <span data-translate="talkToSakhi">Talk to Sakhi</span>
+            </div>
+        </a>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const seedBody = document.getElementById('seed-body');
+            if (seedBody) {
+                gsap.to(seedBody, {
+                    borderRadius: "40% 60% 30% 70% / 70% 30% 60% 40%",
+                    duration: 3,
+                    repeat: -1,
+                    yoyo: true,
+                    ease: "sine.inOut"
+                });
+            }
+        });
+    </script>
 </body>
 </html>

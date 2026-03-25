@@ -1,5 +1,27 @@
 // JavaScript for Krishi Sakhi
 
+// GSAP Premium Reveal Animations
+document.addEventListener('DOMContentLoaded', () => {
+    if (typeof gsap !== 'undefined') {
+        gsap.utils.toArray('.reveal').forEach((elem) => {
+            gsap.fromTo(elem, 
+                { opacity: 0, y: 30 },
+                { 
+                    opacity: 1, 
+                    y: 0, 
+                    duration: 1, 
+                    ease: "power2.out",
+                    scrollTrigger: {
+                        trigger: elem,
+                        start: "top 85%",
+                        toggleActions: "play none none none"
+                    }
+                }
+            );
+        });
+    }
+});
+
 // Voice recognition functionality
 function startVoiceRecognition() {
     if ('webkitSpeechRecognition' in window) {
@@ -12,7 +34,8 @@ function startVoiceRecognition() {
 
         recognition.onresult = function(event) {
             const transcript = event.results[0][0].transcript;
-            document.getElementById('message-input').value = transcript;
+            const inputField = document.getElementById('message-input');
+            if (inputField) inputField.value = transcript;
         };
 
         recognition.onerror = function(event) {
@@ -28,9 +51,7 @@ async function speakText(text) {
     try {
         const response = await fetch('/text_to_speech', {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({text: text})
         });
         
@@ -48,9 +69,6 @@ async function speakText(text) {
 function refreshWeather() {
     fetch('/weather')
         .then(response => response.json())
-        .then(data => {
-            // Update weather display
-            console.log('Weather updated:', data);
-        })
+        .then(data => { console.log('Weather updated:', data); })
         .catch(error => console.error('Weather refresh error:', error));
 }
