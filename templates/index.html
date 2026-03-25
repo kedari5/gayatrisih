@@ -56,28 +56,45 @@
       </div>
     </div>
 
-    <!-- Right Side: Floating Sprout Image -->
-    <div class="hidden md:block w-1/2 relative h-full flex justify-center items-center hero-elem" data-gsap="scale" style="transition-delay: 0.2s;">
+    <!-- Right Side: 3D Zoom Image Sequence -->
+    <div class="hidden md:block w-1/2 relative h-full flex justify-center items-center" style="transition-delay: 0.2s;">
       <div class="absolute inset-0 bg-[#52B788] opacity-10 rounded-full blur-[120px] animate-pulse"></div>
       
-      <!-- Market-leading Leaf Shape Masked Image -->
-      <div class="relative z-10 w-[80%] mx-auto h-[600px] shadow-2xl overflow-hidden group perspective-1000 bg-white" 
-           style="border-radius: 50% 10% 50% 10%;">
-          <img src="https://images.unsplash.com/photo-1523348837708-15d4a09cfac2?auto=format&fit=crop&q=80" 
-               alt="Sprout in sphere" 
-               class="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-1000">
+      <!-- Market-leading Leaf Shape Masked Image Sequence -->
+      <div class="relative z-10 w-[80%] mx-auto h-[600px] shadow-2xl overflow-hidden group perspective-1000 bg-forest" 
+           style="border-radius: 50% 10% 50% 10%; transform-style: preserve-3d;">
           
-          <div class="absolute inset-0 bg-gradient-to-t from-[#1B4332]/80 via-transparent to-transparent opacity-60"></div>
+          <!-- Frame 4: Crops (Bottom-most layer) -->
+          <img src="{{ url_for('static', filename='images/frame4_greenland.png') }}" 
+               alt="Crops" 
+               class="zoom-frame absolute inset-0 w-full h-full object-cover z-10 origin-center transform transition-transform duration-1000">
+               
+          <!-- Frame 3: Sprout -->
+          <img src="{{ url_for('static', filename='images/frame3_plants.png') }}" 
+               alt="Growing Sprout" 
+               class="zoom-frame absolute inset-0 w-full h-full object-cover z-20 origin-center transform">
+               
+          <!-- Frame 2: Farmer Seed Sowing -->
+          <img src="{{ url_for('static', filename='images/frame2_farmer.png') }}" 
+               alt="Farmer Sowing Seeds" 
+               class="zoom-frame absolute inset-0 w-full h-full object-cover z-30 origin-center transform">
+               
+          <!-- Frame 1: Soil (Top-most layer) -->
+          <img src="{{ url_for('static', filename='images/frame1_soil.png') }}" 
+               alt="Soil" 
+               class="zoom-frame absolute inset-0 w-full h-full object-cover z-40 origin-center transform">
+          
+          <div class="absolute inset-0 bg-gradient-to-t from-[#1B4332]/80 via-transparent to-transparent opacity-60 z-50 pointer-events-none"></div>
           
           <!-- Small overlay card -->
-          <div class="absolute bottom-10 left-10 p-5 bg-white/20 backdrop-blur-md border border-white/30 rounded-2xl squircle shadow-lg transform group-hover:-translate-y-2 transition-transform">
+          <div class="absolute bottom-10 left-10 p-5 bg-white/20 backdrop-blur-md border border-white/30 rounded-2xl squircle shadow-lg z-50">
               <div class="flex items-center gap-3">
                   <div class="w-10 h-10 rounded-full bg-white flex items-center justify-center">
-                      <i class="fas fa-spa text-[#52B788]"></i>
+                      <i class="fas fa-seedling text-[#52B788]"></i>
                   </div>
                   <div>
-                      <p class="text-white font-bold text-sm">Optimum Yield</p>
-                      <p class="text-white/80 text-xs">Analysis complete.</p>
+                      <p class="text-white font-bold text-sm">Scroll to Grow</p>
+                      <p class="text-white/80 text-xs text-shadow-sm">Watch the journey unfold</p>
                   </div>
               </div>
           </div>
@@ -343,6 +360,36 @@
                  }
              );
          });
+
+         // 3D Zoom Sequence for Hero right side
+         const zoomImages = document.querySelectorAll('.zoom-frame');
+         if (zoomImages.length > 0 && typeof ScrollTrigger !== 'undefined') {
+             const tl = gsap.timeline({
+                 scrollTrigger: {
+                     trigger: "#hero",
+                     start: "top top",
+                     end: "+=1500", // Scroll distance for the animation
+                     scrub: 1, // Smooth scrolling effect
+                     pin: true, // Pin the hero section while animating
+                 }
+             });
+
+             const frames = gsap.utils.toArray('.zoom-frame');
+             // Frames in DOM order:
+             // [0] Crops (bottom)
+             // [1] Sprout
+             // [2] Farmer
+             // [3] Soil (top)
+             
+             // Zoom through Soil
+             tl.to(frames[3], { scale: 8, opacity: 0, ease: "power2.inOut", duration: 1 }, 0);
+             // Zoom through Farmer
+             tl.to(frames[2], { scale: 8, opacity: 0, ease: "power2.inOut", duration: 1 }, 0.8);
+             // Zoom through Sprout
+             tl.to(frames[1], { scale: 8, opacity: 0, ease: "power2.inOut", duration: 1 }, 1.6);
+             // Slightly zoom Crops at the end
+             tl.to(frames[0], { scale: 1.1, ease: "power1.inOut", duration: 1 }, 2.4);
+         }
      }
   });
 

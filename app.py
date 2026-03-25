@@ -32,12 +32,12 @@ babel = Babel(app)
 # Load environment variables from the .env file
 load_dotenv()
 
-# Load API key from environment (Google AI Studio key)
-GOOGLE_AI_API_KEY = os.getenv("GOOGLE_AI_API_KEY")
+# Load API key directly
+GOOGLE_AI_API_KEY = "AIzaSyCBoKnN_n887xVgDEi2UhsVkQtfu4gqUm4"
 
 if GOOGLE_AI_API_KEY:
     genai.configure(api_key=GOOGLE_AI_API_KEY)
-    genai_client = genai.GenerativeModel("gemini-1.5-flash")  # ✅ free-tier friendly model
+    genai_client = genai.GenerativeModel("gemini-1.5-flash-latest")  # ✅ free-tier friendly model
 else:
     genai_client = None
     print("⚠️ Warning: GOOGLE_AI_API_KEY not set. AI features will be unavailable.")
@@ -159,12 +159,12 @@ def get_weather_data(location):
 
 
 
-# Load API key from environment (Google AI Studio key)
-GOOGLE_AI_API_KEY = os.getenv("GOOGLE_AI_API_KEY")
+# Load API key directly
+GOOGLE_AI_API_KEY = "AIzaSyCBoKnN_n887xVgDEi2UhsVkQtfu4gqUm4"
 
 if GOOGLE_AI_API_KEY:
     genai.configure(api_key=GOOGLE_AI_API_KEY)
-    genai_client = genai.GenerativeModel("gemini-1.5-flash")  # ✅ free-tier friendly model
+    genai_client = genai.GenerativeModel("gemini-1.5-flash-latest")  # ✅ free-tier friendly model
 else:
     genai_client = None
     print("⚠️ Warning: GOOGLE_AI_API_KEY not set. AI features will be unavailable.")
@@ -212,7 +212,7 @@ def get_ai_response(message, user_context=None):
         elif "SERVICE_DISABLED" in error_msg:
             return "⚠️ Google AI Studio API is not enabled for your project. Please enable it from Google Cloud Console."
         else:
-            return "AI service is temporarily unavailable. Please try again later."
+            return f"❌ Google API Error: {error_msg}"
 
 # The resource ID for the "Current Daily Price..." dataset from OGD
 OGD_RESOURCE_ID = "9ef84268-d588-465a-a308-a864a43d0070" 
@@ -300,17 +300,28 @@ def signup():
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
-        phone_number = request.form['phone_number']
-        password = request.form['password']
+        phone_number = request.form.get('phone_number')
+        password = request.form.get('password')
 
-        user = User.query.filter_by(phone_number=phone_number).first()
-        if user and check_password_hash(user.password_hash, password):
+        user = None
+        if phone_number:
+            user = User.query.filter_by(phone_number=phone_number).first()
+            if user and not check_password_hash(user.password_hash, password):
+                user = None
+        else:
+            # Login by password only
+            for u in User.query.all():
+                if check_password_hash(u.password_hash, password):
+                    user = u
+                    break
+
+        if user:
             login_user(user)
             flash('Logged in successfully!', 'success')
             next_page = request.args.get('next')
             return redirect(next_page or url_for('dashboard'))
         else:
-            flash('Invalid phone number or password!', 'error')
+            flash('Invalid password!' if not phone_number else 'Invalid phone number or password!', 'error')
 
     return render_template('login.html')
 

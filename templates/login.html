@@ -22,16 +22,7 @@
             </div>
 
             <form method="POST" class="space-y-6 relative z-10">
-                <div class="space-y-2">
-                    <label for="phone_number" class="text-xs font-bold text-forest/40 uppercase tracking-widest px-2" data-translate="phoneNumber">Phone Number</label>
-                    <div class="relative">
-                        <i class="fas fa-phone absolute left-5 top-1/2 -translate-y-1/2 text-forest/30"></i>
-                        <input type="tel" id="phone_number" name="phone_number" required 
-                               class="w-full pl-12 pr-6 py-4 bg-white/50 border border-forest/10 rounded-2xl focus:ring-4 focus:ring-forest/5 focus:border-forest outline-none transition-all"
-                               placeholder="Enter your phone number" data-translate="phonePlaceholder">
-                    </div>
-                </div>
-                
+
                 <div class="space-y-2">
                     <label for="password" class="text-xs font-bold text-forest/40 uppercase tracking-widest px-2" data-translate="password">Password</label>
                     <div class="relative">
@@ -53,7 +44,7 @@
             <div class="text-center mt-8 pt-8 border-t border-forest/5">
                 <p class="text-sm text-forest/60" data-translate="noAccount">
                     Don't have an account? 
-                    <a href="{{ url_for('signup') }}" class="text-forest font-bold hover:underline" data-translate="signupLink">Join our Community</a>
+                    <a href="{{ url_for('signup') }}" class="text-forest font-bold hover:underline" data-translate="signupLink">Signup</a>
                 </p>
             </div>
         </div>
@@ -73,7 +64,7 @@
         en: {
             login: "Welcome Back",
             loginButton: "Access Dashboard",
-            signupLink: "Join our Community"
+            signupLink: "Signup"
         },
         ml: {
             login: "സ്വാഗതം",
