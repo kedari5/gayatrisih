@@ -2,6 +2,8 @@
 
 {% block title %}Krishi Sakhi - Cultivating Intelligence{% endblock %}
 
+{% block navbar %}{% endblock %}
+
 {% block content %}
 <!-- Custom Cursor Follower -->
 <div id="cursor" class="fixed w-6 h-6 bg-[#1B4332]/40 border border-[#1B4332] rounded-full pointer-events-none z-[9999] transition-transform duration-100 ease-out transform -translate-x-1/2 -translate-y-1/2 backdrop-blur-sm hidden md:block"></div>
@@ -242,10 +244,7 @@
   body:hover #cursor { opacity: 1; }
   #cursor { opacity: 0; pointer-events: none; }
   .cursor-expand {
-      transform: translate(-50%, -50%) scale(3) !important;
-      background-color: rgba(82, 183, 136, 0.2) !important;
-      border-color: transparent !important;
-      backdrop-filter: blur(2px) !important;
+      transform: translate(-50%, -50%) scale(1.5) !important;
   }
 </style>
 {% endblock %}

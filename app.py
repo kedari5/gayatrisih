@@ -32,12 +32,12 @@ babel = Babel(app)
 # Load environment variables from the .env file
 load_dotenv()
 
-# Load API key directly
-GOOGLE_AI_API_KEY = "AIzaSyCBoKnN_n887xVgDEi2UhsVkQtfu4gqUm4"
+# Load API key directly from environment
+GOOGLE_AI_API_KEY = os.environ.get("GOOGLE_AI_API_KEY")
 
 if GOOGLE_AI_API_KEY:
     genai.configure(api_key=GOOGLE_AI_API_KEY)
-    genai_client = genai.GenerativeModel("gemini-1.5-flash-latest")  # ✅ free-tier friendly model
+    genai_client = genai.GenerativeModel("gemini-1.5-flash")  # ✅ free-tier friendly model
 else:
     genai_client = None
     print("⚠️ Warning: GOOGLE_AI_API_KEY not set. AI features will be unavailable.")
@@ -159,12 +159,12 @@ def get_weather_data(location):
 
 
 
-# Load API key directly
-GOOGLE_AI_API_KEY = "AIzaSyCBoKnN_n887xVgDEi2UhsVkQtfu4gqUm4"
+# Load API key directly from environment
+GOOGLE_AI_API_KEY = os.environ.get("GOOGLE_AI_API_KEY")
 
 if GOOGLE_AI_API_KEY:
     genai.configure(api_key=GOOGLE_AI_API_KEY)
-    genai_client = genai.GenerativeModel("gemini-1.5-flash-latest")  # ✅ free-tier friendly model
+    genai_client = genai.GenerativeModel("gemini-1.5-flash")  # ✅ free-tier friendly model
 else:
     genai_client = None
     print("⚠️ Warning: GOOGLE_AI_API_KEY not set. AI features will be unavailable.")
@@ -317,7 +317,6 @@ def login():
 
         if user:
             login_user(user)
-            flash('Logged in successfully!', 'success')
             next_page = request.args.get('next')
             return redirect(next_page or url_for('dashboard'))
         else:
@@ -329,7 +328,6 @@ def login():
 @login_required
 def logout():
     logout_user()
-    flash('You have been logged out.', 'info')
     return redirect(url_for('index'))
 
 @app.route('/dashboard')
