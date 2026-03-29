@@ -36,7 +36,7 @@
                             <span class="text-sm font-bold uppercase tracking-widest text-forest/80">{{ weather.name }}</span>
                         </div>
                         <div class="flex items-center gap-6">
-                            <span class="font-serif text-7xl md:text-8xl text-forest tracking-tighter">{{ weather.main.temp|round }}<span class="text-4xl">°C</span></span>
+                            <span class="font-serif text-7xl md:text-8xl text-forest tracking-tighter">{{ weather.main.temp|round|int }}<span class="text-4xl">°C</span></span>
                             <div class="h-16 w-16 bg-forest/5 rounded-2xl flex items-center justify-center">
                                 <img src="http://openweathermap.org/img/wn/{{ weather.weather[0].icon }}@2x.png" class="w-full h-full" alt="icon">
                             </div>
@@ -152,7 +152,7 @@
         // Dynamic Greeting Logic
         const greetingEl = document.getElementById('dynamic-greeting');
         const insightEl = document.getElementById('dynamic-insight');
-        const userName = "{% if current_user.farmer_profile %}{{ current_user.farmer_profile.name }}{% else %}Farmer{% endif %}";
+        const userName = `{% if current_user.farmer_profile %}{{ current_user.farmer_profile.name }}{% else %}Farmer{% endif %}`;
         
         const hour = new Date().getHours();
         let intro = "Good Morning";
@@ -162,20 +162,23 @@
         greetingEl.innerHTML = `<span class="opacity-40 animate-pulse font-sans text-xl block mb-2">${intro},</span>${userName}`;
         
         // Dynamic Insights based on Weather (if available)
-        {% if weather %}
-        const humidity = {{ weather.main.humidity }};
-        const temp = {{ weather.main.temp }};
-        const description = "{{ weather.weather[0].description }}";
-        
-        let insightText = "Ready for another productive day in the fields?";
-        
-        if (humidity > 70) insightText = "The humidity is high today—keep an eye on your crops for fungal growth.";
-        else if (temp > 35) insightText = "It's quite hot today—ensure extra irrigation for your young seedlings.";
-        else if (description.includes("rain")) insightText = "Rain predicted—ensure your drainage channels are clear.";
-        else if (description.includes("clear")) insightText = "Skies are clear—a perfect day for harvesting or sowing.";
-        
-        insightEl.innerText = insightText;
-        {% endif %}
+        const weatherData = {
+            exists: ("{{ 'true' if weather else 'false' }}" === 'true'),
+            humidity: Number("{{ weather.main.humidity | default(0) if weather else 0 }}"),
+            temp: Number("{{ weather.main.temp | default(0) if weather else 0 }}"),
+            description: "{{ weather.weather[0].description if weather and weather.weather else '' }}"
+        };
+
+        if (weatherData.exists) {
+            let insightText = "Ready for another productive day in the fields?";
+            
+            if (weatherData.humidity > 70) insightText = "The humidity is high today—keep an eye on your crops for fungal growth.";
+            else if (weatherData.temp > 35) insightText = "It's quite hot today—ensure extra irrigation for your young seedlings.";
+            else if (weatherData.description.includes("rain")) insightText = "Rain predicted—ensure your drainage channels are clear.";
+            else if (weatherData.description.includes("clear")) insightText = "Skies are clear—a perfect day for harvesting or sowing.";
+            
+            insightEl.innerText = insightText;
+        }
 
         // GSAP Animations
         gsap.from(".glass-card", {

@@ -194,18 +194,18 @@
 
       <div class="relative h-[500px] w-full max-w-6xl mx-auto z-10 hidden md:block" id="bubble-container">
           {% set langs = [
-              {'code': 'en', 'label': 'Eng', 'color': '#D8F3DC', 'size': 'w-32 h-32', 'pos': 'top: 10%; left: 20%;'},
-              {'code': 'hi', 'label': 'हिन्दी', 'color': '#B7E4C7', 'size': 'w-44 h-44', 'pos': 'top: 30%; left: 45%;'},
-              {'code': 'ta', 'label': 'தமிழ்', 'color': '#95D5B2', 'size': 'w-24 h-24', 'pos': 'top: 60%; left: 25%;'},
-              {'code': 'te', 'label': 'తెలుగు', 'color': '#74C69D', 'size': 'w-36 h-36', 'pos': 'top: 15%; left: 75%;'},
-              {'code': 'ml', 'label': 'മലയാളം', 'color': '#52B788', 'size': 'w-32 h-32', 'pos': 'top: 60%; left: 65%;'},
-              {'code': 'kn', 'label': 'ಕನ್ನಡ', 'color': '#40916C', 'size': 'w-28 h-28', 'pos': 'top: 80%; left: 45%;'}
+              {'code': 'en', 'label': 'Eng', 'color': '#D8F3DC', 'size': 'w-32 h-32', 'top': '10%', 'left': '20%'},
+              {'code': 'hi', 'label': 'हिन्दी', 'color': '#B7E4C7', 'size': 'w-44 h-44', 'top': '30%', 'left': '45%'},
+              {'code': 'ta', 'label': 'தமிழ்', 'color': '#95D5B2', 'size': 'w-24 h-24', 'top': '60%', 'left': '25%'},
+              {'code': 'te', 'label': 'తెలుగు', 'color': '#74C69D', 'size': 'w-36 h-36', 'top': '15%', 'left': '75%'},
+              {'code': 'ml', 'label': 'മലയാളം', 'color': '#52B788', 'size': 'w-32 h-32', 'top': '60%', 'left': '65%'},
+              {'code': 'kn', 'label': 'ಕನ್ನಡ', 'color': '#40916C', 'size': 'w-28 h-28', 'top': '80%', 'left': '45%'}
           ] %}
           
           {% for lang in langs %}
           <div class="language-bubble absolute rounded-full flex items-center justify-center cursor-pointer shadow-xl hover:shadow-2xl transition-all hover:scale-110 leaf-btn-cursor bubble-anim {{ lang.size }}"
                data-lang="{{ lang.code }}" data-color="{{ lang.color }}"
-               style="background-color: {{ lang.color }}; {{ lang.pos }} animation-delay: {{ loop.index0 * 0.7 }}s;">
+               style="background-color: {{ lang.color }}; top: {{ lang.top }}; left: {{ lang.left }}; animation-delay: {{ loop.index0 * 0.7 }}s;">
               <span class="{% if loop.index > 4 %}text-white{% else %}text-[#1B4332]{% endif %} font-bold text-xl drop-shadow-sm">{{ lang.label }}</span>
           </div>
           {% endfor %}
@@ -227,7 +227,7 @@
 
 <style>
   /* Base Overrides for Landing */
-  body { background-color: #F8F9FA; border-radius: 40px; margin: 16px; min-height: calc(100vh - 32px); }
+  body { background-color: #F8F9FA; }
   
   /* Morphing text transition */
   #changing-text { transition: opacity 0.5s ease-in-out; }
@@ -343,6 +343,10 @@
   // GSAP Entry Animations for Landing specific elements
   document.addEventListener("DOMContentLoaded", () => {
      if (typeof gsap !== 'undefined') {
+         if (typeof ScrollTrigger !== 'undefined') {
+             gsap.registerPlugin(ScrollTrigger);
+         }
+         
          // Scale effect that triggers on scroll
          gsap.utils.toArray('[data-gsap="scale"]').forEach(elem => {
              gsap.fromTo(elem, 
