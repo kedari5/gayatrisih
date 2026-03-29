@@ -27,19 +27,9 @@
                 <div class="flex items-center space-x-6 relative z-10">
                     <!-- Crop Image -->
                     <div class="h-24 w-24 shrink-0 overflow-hidden rounded-full border-4 border-cream bg-white shadow-inner transform transition-transform duration-700 group-hover:scale-110">
-                        {% set img_map = {
-                            'rice': 'https://images.unsplash.com/photo-1586201375761-83865001e31c?auto=format&fit=crop&w=300&q=80',
-                            'wheat': 'https://images.unsplash.com/photo-1574323347407-f5e1ad6d020b?auto=format&fit=crop&w=300&q=80',
-                            'sugarcane': 'https://images.unsplash.com/photo-1594911771101-fa08124f5933?auto=format&fit=crop&w=300&q=80',
-                            'cotton': 'https://images.unsplash.com/photo-1606144042614-b2417e99c4e3?auto=format&fit=crop&w=300&q=80',
-                            'onion': 'https://images.unsplash.com/photo-1508747703725-719777637510?auto=format&fit=crop&w=300&q=80',
-                            'tomato': 'https://images.unsplash.com/photo-1592924357228-91a4daadcfea?auto=format&fit=crop&w=300&q=80',
-                            'potato': 'https://images.unsplash.com/photo-1518977676601-b53f82aba655?auto=format&fit=crop&w=300&q=80',
-                            'maize': 'https://images.unsplash.com/photo-1551754655-cd27e38d2076?auto=format&fit=crop&w=300&q=80',
-                            'soybean': 'https://images.unsplash.com/photo-1594052010265-2766ec60df6a?auto=format&fit=crop&w=300&q=80'
-                        } %}
-                        <img src="{{ img_map.get(price['name'], 'https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=300&q=80') }}" 
-                             class="h-full w-full object-cover" alt="{{ price['translated_name'] }}">
+                        <img src="{{ price['img_url'] }}"
+                             class="h-full w-full object-cover" alt="{{ price['translated_name'] }}"
+                             onerror="this.src='https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=300&q=80'">
                     </div>
                     
                     <!-- Price Info -->

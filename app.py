@@ -1,18 +1,23 @@
 import os
 import json
 import logging
-from datetime import datetime
-from flask import Flask, render_template, request, jsonify, redirect, url_for, flash, session
-from flask_sqlalchemy import SQLAlchemy
-from flask_login import LoginManager, UserMixin, login_user, logout_user, login_required, current_user
-from flask_babel import Babel, gettext
-from werkzeug.security import generate_password_hash, check_password_hash
-import requests
-from gtts import gTTS
-import google.generativeai as genai
 import tempfile
 import base64
-from dotenv import load_dotenv
+import requests # type: ignore
+from datetime import datetime
+from typing import Any, Union, cast, Optional, List, Dict
+
+from flask import Flask, render_template, request, jsonify, redirect, url_for, flash, session # type: ignore
+from flask_sqlalchemy import SQLAlchemy # type: ignore
+from flask_login import LoginManager, UserMixin, login_user, logout_user, login_required, current_user # type: ignore
+from flask_babel import Babel, gettext # type: ignore
+from werkzeug.security import generate_password_hash, check_password_hash # type: ignore
+from gtts import gTTS # type: ignore
+import google.generativeai as genai # type: ignore
+from dotenv import load_dotenv # type: ignore
+
+# --- Setup Logging ---
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
 # ------------------- Flask App Config -------------------
 app = Flask(__name__)
@@ -28,19 +33,18 @@ login_manager.login_view = 'login'
 login_manager.login_message = 'Please log in to access this page.'
 babel = Babel(app)
 
-# ------------------- Gemini AI Config -------------------
 # Load environment variables from the .env file
 load_dotenv()
 
-# Load API key directly from environment
+# Gemini AI Config
 GOOGLE_AI_API_KEY = os.environ.get("GOOGLE_AI_API_KEY")
 
 if GOOGLE_AI_API_KEY:
-    genai.configure(api_key=GOOGLE_AI_API_KEY)
-    genai_client = genai.GenerativeModel("gemini-1.5-flash")  # ✅ free-tier friendly model
+    genai.configure(api_key=GOOGLE_AI_API_KEY.strip('"'))
+    genai_client = genai.GenerativeModel("gemini-1.5-flash")
 else:
     genai_client = None
-    print("⚠️ Warning: GOOGLE_AI_API_KEY not set. AI features will be unavailable.")
+    logging.warning("GOOGLE_AI_API_KEY not set. AI features will be unavailable.")
 
 # ------------------- Languages -------------------
 LANGUAGES = {
@@ -54,48 +58,48 @@ LANGUAGES = {
 
 # ------------------- Database Models -------------------
 class User(UserMixin, db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    phone_number = db.Column(db.String(15), unique=True, nullable=False)
-    password_hash = db.Column(db.String(128), nullable=False)
-    language_preference = db.Column(db.String(5), default='en')
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    id: int = db.Column(db.Integer, primary_key=True)
+    phone_number: str = db.Column(db.String(15), unique=True, nullable=False)
+    password_hash: str = db.Column(db.String(128), nullable=False)
+    language_preference: str = db.Column(db.String(5), default='en')
+    created_at: datetime = db.Column(db.DateTime, default=datetime.utcnow)
 
     farmer_profile = db.relationship('FarmerProfile', backref='user', uselist=False)
     chat_messages = db.relationship('ChatMessage', backref='user', lazy=True)
     activities = db.relationship('Activity', backref='user', lazy=True)
 
 class FarmerProfile(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-    name = db.Column(db.String(100), nullable=False)
-    location = db.Column(db.String(100), nullable=True)
-    land_size = db.Column(db.Float)
-    crop_type = db.Column(db.String(100))
-    soil_type = db.Column(db.String(50))
-    irrigation_type = db.Column(db.String(50))
-    experience_years = db.Column(db.Integer)
-    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    id: int = db.Column(db.Integer, primary_key=True)
+    user_id: int = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    name: str = db.Column(db.String(100), nullable=False)
+    location: Optional[str] = db.Column(db.String(100), nullable=True)
+    land_size: Optional[float] = db.Column(db.Float)
+    crop_type: Optional[str] = db.Column(db.String(100))
+    soil_type: Optional[str] = db.Column(db.String(50))
+    irrigation_type: Optional[str] = db.Column(db.String(50))
+    experience_years: Optional[int] = db.Column(db.Integer)
+    updated_at: datetime = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
 class ChatMessage(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-    message = db.Column(db.Text, nullable=False)
-    response = db.Column(db.Text)
-    timestamp = db.Column(db.DateTime, default=datetime.utcnow)
-    language = db.Column(db.String(5), default='en')
+    id: int = db.Column(db.Integer, primary_key=True)
+    user_id: int = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    message: str = db.Column(db.Text, nullable=False)
+    response: str = db.Column(db.Text)
+    timestamp: datetime = db.Column(db.DateTime, default=datetime.utcnow)
+    language: str = db.Column(db.String(5), default='en')
 
 class Activity(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-    activity_type = db.Column(db.String(50), nullable=False)
-    description = db.Column(db.Text, nullable=False)
-    date_recorded = db.Column(db.Date, default=datetime.utcnow)
-    timestamp = db.Column(db.DateTime, default=datetime.utcnow)
+    id: int = db.Column(db.Integer, primary_key=True)
+    user_id: int = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    activity_type: str = db.Column(db.String(50), nullable=False)
+    description: str = db.Column(db.Text, nullable=False)
+    date_recorded: datetime = db.Column(db.Date, default=datetime.utcnow) # type: ignore
+    timestamp: datetime = db.Column(db.DateTime, default=datetime.utcnow)
 
 # ------------------- Flask-Login -------------------
 @login_manager.user_loader
 def load_user(user_id):
-    return User.query.get(int(user_id))
+    return db.session.get(User, int(user_id))
 
 def get_locale():
     # Check if user is authenticated and has a language preference
@@ -159,15 +163,7 @@ def get_weather_data(location):
 
 
 
-# Load API key directly from environment
-GOOGLE_AI_API_KEY = os.environ.get("GOOGLE_AI_API_KEY")
 
-if GOOGLE_AI_API_KEY:
-    genai.configure(api_key=GOOGLE_AI_API_KEY)
-    genai_client = genai.GenerativeModel("gemini-1.5-flash")  # ✅ free-tier friendly model
-else:
-    genai_client = None
-    print("⚠️ Warning: GOOGLE_AI_API_KEY not set. AI features will be unavailable.")
 
 def get_ai_response(message, user_context=None):
     """
@@ -217,6 +213,77 @@ def get_ai_response(message, user_context=None):
 # The resource ID for the "Current Daily Price..." dataset from OGD
 OGD_RESOURCE_ID = "9ef84268-d588-465a-a308-a864a43d0070" 
 
+CROP_IMAGES = {
+    'rice':         'https://images.unsplash.com/photo-1586201375761-83865001e31c?auto=format&fit=crop&w=300&q=80',
+    'wheat':        'https://images.unsplash.com/photo-1574323347407-f5e1ad6d020b?auto=format&fit=crop&w=300&q=80',
+    'sugarcane':    'https://images.unsplash.com/photo-1594911771101-fa08124f5933?auto=format&fit=crop&w=300&q=80',
+    'cotton':       'https://images.unsplash.com/photo-1606144042614-b2417e99c4e3?auto=format&fit=crop&w=300&q=80',
+    'onion':        'https://images.unsplash.com/photo-1508747703725-719777637510?auto=format&fit=crop&w=300&q=80',
+    'tomato':       'https://images.unsplash.com/photo-1592924357228-91a4daadcfea?auto=format&fit=crop&w=300&q=80',
+    'potato':       'https://images.unsplash.com/photo-1518977676601-b53f82aba655?auto=format&fit=crop&w=300&q=80',
+    'maize':        'https://images.unsplash.com/photo-1551754655-cd27e38d2076?auto=format&fit=crop&w=300&q=80',
+    'corn':         'https://images.unsplash.com/photo-1551754655-cd27e38d2076?auto=format&fit=crop&w=300&q=80',
+    'soybean':      'https://images.unsplash.com/photo-1595855759920-86582396756a?auto=format&fit=crop&w=300&q=80',
+    'carrot':       'https://images.unsplash.com/photo-1598170845058-32b9d6a5da37?auto=format&fit=crop&w=300&q=80',
+    'banana':       'https://images.unsplash.com/photo-1528825871115-3581a5387919?auto=format&fit=crop&w=300&q=80',
+    'mango':        'https://images.unsplash.com/photo-1601493700631-2b16ec4b4716?auto=format&fit=crop&w=300&q=80',
+    'apple':        'https://images.unsplash.com/photo-1567306226416-28f0efdc88ce?auto=format&fit=crop&w=300&q=80',
+    'grapes':       'https://images.unsplash.com/photo-1537640538966-79f369143f8f?auto=format&fit=crop&w=300&q=80',
+    'grape':        'https://images.unsplash.com/photo-1537640538966-79f369143f8f?auto=format&fit=crop&w=300&q=80',
+    'garlic':       'https://images.unsplash.com/photo-1615397349754-cfa2066a298e?auto=format&fit=crop&w=300&q=80',
+    'ginger':       'https://images.unsplash.com/photo-1598170845058-32b9d6a5da37?auto=format&fit=crop&w=300&q=80',
+    'turmeric':     'https://images.unsplash.com/photo-1615485291234-9d694218aeb3?auto=format&fit=crop&w=300&q=80',
+    'chilli':       'https://images.unsplash.com/photo-1583119022894-919a68a3d0e3?auto=format&fit=crop&w=300&q=80',
+    'chili':        'https://images.unsplash.com/photo-1583119022894-919a68a3d0e3?auto=format&fit=crop&w=300&q=80',
+    'pepper':       'https://images.unsplash.com/photo-1563565375-f3fdfdbefa83?auto=format&fit=crop&w=300&q=80',
+    'capsicum':     'https://images.unsplash.com/photo-1563565375-f3fdfdbefa83?auto=format&fit=crop&w=300&q=80',
+    'peas':         'https://images.unsplash.com/photo-1587735243615-c03f25aaff15?auto=format&fit=crop&w=300&q=80',
+    'beans':        'https://images.unsplash.com/photo-1567306301408-9b74779a11af?auto=format&fit=crop&w=300&q=80',
+    'bottle gourd': 'https://images.unsplash.com/photo-1556801712-76c379107f77?auto=format&fit=crop&w=300&q=80',
+    'brinjal':      'https://images.unsplash.com/photo-1568584711075-3d021a7c3ca3?auto=format&fit=crop&w=300&q=80',
+    'eggplant':     'https://images.unsplash.com/photo-1568584711075-3d021a7c3ca3?auto=format&fit=crop&w=300&q=80',
+    'cabbage':      'https://images.unsplash.com/photo-1594282486552-05b4d80fbb9f?auto=format&fit=crop&w=300&q=80',
+    'cauliflower':  'https://images.unsplash.com/photo-1568584711271-de36b87dc7b6?auto=format&fit=crop&w=300&q=80',
+    'spinach':      'https://images.unsplash.com/photo-1576045057995-568f588f82fb?auto=format&fit=crop&w=300&q=80',
+    'amaranthus':   'https://images.unsplash.com/photo-1576045057995-568f588f82fb?auto=format&fit=crop&w=300&q=80',
+    'coriander':    'https://images.unsplash.com/photo-1601315379734-425a469078e4?auto=format&fit=crop&w=300&q=80',
+    'bitter gourd': 'https://images.unsplash.com/photo-1607305387299-a3d9611cd469?auto=format&fit=crop&w=300&q=80',
+    'cucumber':     'https://images.unsplash.com/photo-1604977042946-1eecc30f269e?auto=format&fit=crop&w=300&q=80',
+    'pumpkin':      'https://images.unsplash.com/photo-1570586437263-ab629fccc818?auto=format&fit=crop&w=300&q=80',
+    'radish':       'https://images.unsplash.com/photo-1582284540020-8acbe03f4924?auto=format&fit=crop&w=300&q=80',
+    'drumstick':    'https://images.unsplash.com/photo-1567306301408-9b74779a11af?auto=format&fit=crop&w=300&q=80',
+    'orange':       'https://images.unsplash.com/photo-1547514701-42782101795e?auto=format&fit=crop&w=300&q=80',
+    'lemon':        'https://images.unsplash.com/photo-1590502593747-42a996133562?auto=format&fit=crop&w=300&q=80',
+    'lime':         'https://images.unsplash.com/photo-1590502593747-42a996133562?auto=format&fit=crop&w=300&q=80',
+    'groundnut':    'https://images.unsplash.com/photo-1567306301408-9b74779a11af?auto=format&fit=crop&w=300&q=80',
+    'peanut':       'https://images.unsplash.com/photo-1567306301408-9b74779a11af?auto=format&fit=crop&w=300&q=80',
+    'sunflower':    'https://images.unsplash.com/photo-1597848212624-a19eb35e2651?auto=format&fit=crop&w=300&q=80',
+    'mustard':      'https://images.unsplash.com/photo-1615485290368-0c7f27c489a5?auto=format&fit=crop&w=300&q=80',
+    'jowar':        'https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=300&q=80',
+    'bajra':        'https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=300&q=80',
+    'arhar':        'https://images.unsplash.com/photo-1567306301408-9b74779a11af?auto=format&fit=crop&w=300&q=80',
+    'moong':        'https://images.unsplash.com/photo-1567306301408-9b74779a11af?auto=format&fit=crop&w=300&q=80',
+    'urad':         'https://images.unsplash.com/photo-1567306301408-9b74779a11af?auto=format&fit=crop&w=300&q=80',
+    'lentil':       'https://images.unsplash.com/photo-1534483509719-3feaee7c30da?auto=format&fit=crop&w=300&q=80',
+    'coconut':      'https://images.unsplash.com/photo-1555694702-a8e3e3463d91?auto=format&fit=crop&w=300&q=80',
+    'watermelon':   'https://images.unsplash.com/photo-1563114773-84221bd62daa?auto=format&fit=crop&w=300&q=80',
+    'papaya':       'https://images.unsplash.com/photo-1526318472351-c75fcf070305?auto=format&fit=crop&w=300&q=80',
+    'pomegranate':  'https://images.unsplash.com/photo-1541344999736-83eca272f6fc?auto=format&fit=crop&w=300&q=80',
+}
+DEFAULT_CROP_IMAGE = 'https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=300&q=80'
+
+def get_crop_image(crop_name):
+    """Returns the best matching crop image URL for a given crop name."""
+    name = crop_name.lower().strip()
+    # Exact match first
+    if name in CROP_IMAGES:
+        return CROP_IMAGES[name]
+    # Partial match: crop key is a word inside the crop name
+    for key, url in CROP_IMAGES.items():
+        if key in name:
+            return url
+    return DEFAULT_CROP_IMAGE
+
 def get_market_prices_from_ogd(api_key, resource_id):
     """
     Fetches daily market prices from the OGD Platform India API.
@@ -225,34 +292,66 @@ def get_market_prices_from_ogd(api_key, resource_id):
     params = {
         'api-key': api_key,
         'format': 'json',
-        'limit': 100
+        'limit': 300
     }
     
     try:
-        response = requests.get(base_url, params=params)
+        response = requests.get(base_url, params=params, timeout=45)
         response.raise_for_status()
         data = response.json()
         
         records = data.get('records', [])
-        formatted_data = []
+        formatted_data: List[Dict[str, Any]] = []
         
         for record in records:
-            # Safely extract data from the record
-            formatted_data.append({
-                'name': record.get('commodity', 'N/A').lower(),
-                'price_modal': float(record.get('modal_price', 0)),
-                'price_min': float(record.get('min_price', 0)),
-                'price_max': float(record.get('max_price', 0)),
-                'unit': record.get('unit', 'per quintal'),
-                'market': record.get('market', 'N/A'),
-                'state': record.get('state', 'N/A')
-            })
+            try:
+                formatted_data.append({
+                    'name': str(record.get('commodity') or 'N/A').lower().strip(),
+                    'price_modal': float(record.get('modal_price') or 0),
+                    'price_min': float(record.get('min_price') or 0),
+                    'price_max': float(record.get('max_price') or 0),
+                    'unit': str(record.get('unit') or 'per quintal'),
+                    'market': str(record.get('market') or 'N/A'),
+                    'state': str(record.get('state') or 'N/A')
+                })
+            except (ValueError, TypeError):
+                continue
         
         return formatted_data
 
+    except requests.exceptions.Timeout:
+        logging.warning("OGD API timed out, returning demo data")
+        return _get_demo_market_prices()
     except requests.exceptions.RequestException as e:
-        print(f"Error fetching data: {e}")
-        return [] # Return an empty list to avoid errors
+        logging.warning(f"OGD API error: {e}, returning demo data")
+        return _get_demo_market_prices()
+
+def _get_demo_market_prices():
+    """Returns expanded demo market price data when the API is unavailable."""
+    return [
+        {'name': 'rice', 'price_modal': 2183, 'price_min': 2000, 'price_max': 2400, 'unit': 'per quintal', 'market': 'Karnal APMC', 'state': 'Haryana'},
+        {'name': 'wheat', 'price_modal': 2275, 'price_min': 2100, 'price_max': 2450, 'unit': 'per quintal', 'market': 'Ludhiana APMC', 'state': 'Punjab'},
+        {'name': 'onion', 'price_modal': 1850, 'price_min': 1600, 'price_max': 2100, 'unit': 'per quintal', 'market': 'Lasalgaon APMC', 'state': 'Maharashtra'},
+        {'name': 'tomato', 'price_modal': 2400, 'price_min': 2000, 'price_max': 2800, 'unit': 'per quintal', 'market': 'Kolar APMC', 'state': 'Karnataka'},
+        {'name': 'potato', 'price_modal': 1200, 'price_min': 1000, 'price_max': 1400, 'unit': 'per quintal', 'market': 'Agra APMC', 'state': 'Uttar Pradesh'},
+        {'name': 'cotton', 'price_modal': 6830, 'price_min': 6500, 'price_max': 7200, 'unit': 'per quintal', 'market': 'Rajkot APMC', 'state': 'Gujarat'},
+        {'name': 'sugarcane', 'price_modal': 350, 'price_min': 320, 'price_max': 380, 'unit': 'per quintal', 'market': 'Pune APMC', 'state': 'Maharashtra'},
+        {'name': 'maize', 'price_modal': 1950, 'price_min': 1800, 'price_max': 2100, 'unit': 'per quintal', 'market': 'Gulbarga APMC', 'state': 'Karnataka'},
+        {'name': 'soybean', 'price_modal': 4500, 'price_min': 4200, 'price_max': 4800, 'unit': 'per quintal', 'market': 'Indore APMC', 'state': 'Madhya Pradesh'},
+        {'name': 'carrot', 'price_modal': 2800, 'price_min': 2400, 'price_max': 3200, 'unit': 'per quintal', 'market': 'Jaipur APMC', 'state': 'Rajasthan'},
+        {'name': 'banana', 'price_modal': 1500, 'price_min': 1200, 'price_max': 1800, 'unit': 'per quintal', 'market': 'Jalgaon APMC', 'state': 'Maharashtra'},
+        {'name': 'grapes', 'price_modal': 4500, 'price_min': 4000, 'price_max': 5200, 'unit': 'per quintal', 'market': 'Nashik APMC', 'state': 'Maharashtra'},
+        {'name': 'garlic', 'price_modal': 8500, 'price_min': 7500, 'price_max': 9500, 'unit': 'per quintal', 'market': 'Mandsaur APMC', 'state': 'Madhya Pradesh'},
+        {'name': 'ginger', 'price_modal': 6200, 'price_min': 5800, 'price_max': 6800, 'unit': 'per quintal', 'market': 'Kochi APMC', 'state': 'Kerala'},
+        {'name': 'chilli', 'price_modal': 12500, 'price_min': 11000, 'price_max': 14000, 'unit': 'per quintal', 'market': 'Guntur APMC', 'state': 'Andhra Pradesh'},
+        {'name': 'capsicum', 'price_modal': 3200, 'price_min': 2800, 'price_max': 3600, 'unit': 'per quintal', 'market': 'Solan APMC', 'state': 'Himachal Pradesh'},
+        {'name': 'cauliflower', 'price_modal': 1800, 'price_min': 1500, 'price_max': 2200, 'unit': 'per quintal', 'market': 'Bareilly APMC', 'state': 'Uttar Pradesh'},
+        {'name': 'cabbage', 'price_modal': 900, 'price_min': 700, 'price_max': 1100, 'unit': 'per quintal', 'market': 'Sonipat APMC', 'state': 'Haryana'},
+        {'name': 'coconut', 'price_modal': 2500, 'price_min': 2200, 'price_max': 2800, 'unit': 'per 1000 nuts', 'market': 'Kozhikode APMC', 'state': 'Kerala'},
+        {'name': 'mango', 'price_modal': 4200, 'price_min': 3500, 'price_max': 5000, 'unit': 'per quintal', 'market': 'Ratnagiri APMC', 'state': 'Maharashtra'},
+        {'name': 'orange', 'price_modal': 3800, 'price_min': 3200, 'price_max': 4500, 'unit': 'per quintal', 'market': 'Nagpur APMC', 'state': 'Maharashtra'},
+        {'name': 'lentil', 'price_modal': 6400, 'price_min': 6000, 'price_max': 6800, 'unit': 'per quintal', 'market': 'Sagar APMC', 'state': 'Madhya Pradesh'},
+    ]
 
 # ------------------- Routes -------------------
 @app.route('/')
@@ -276,17 +375,17 @@ def signup():
             return render_template('signup.html', languages=LANGUAGES)
 
         user = User(
-            phone_number=phone_number,
-            password_hash=generate_password_hash(password),
-            language_preference=language_preference
+            phone_number=phone_number, # type: ignore
+            password_hash=generate_password_hash(password), # type: ignore
+            language_preference=language_preference # type: ignore
         )
         db.session.add(user)
         db.session.commit()
 
         profile = FarmerProfile(
-            user_id=user.id,
-            name=name,
-            location=location
+            user_id=user.id, # type: ignore
+            name=name, # type: ignore
+            location=location # type: ignore
         )
         db.session.add(profile)
         db.session.commit()
@@ -337,12 +436,8 @@ def dashboard():
     if current_user.farmer_profile and current_user.farmer_profile.location:
         weather_data = get_weather_data(current_user.farmer_profile.location)
 
-    recent_chats = ChatMessage.query.filter_by(user_id=current_user.id)\
-                                   .order_by(ChatMessage.timestamp.desc())\
-                                   .limit(5).all()
-    recent_activities = Activity.query.filter_by(user_id=current_user.id)\
-                                     .order_by(Activity.timestamp.desc())\
-                                     .limit(5).all()
+    recent_chats = ChatMessage.query.filter_by(user_id=current_user.id).order_by(ChatMessage.timestamp.desc()).limit(5).all() # type: ignore
+    recent_activities = Activity.query.filter_by(user_id=current_user.id).order_by(Activity.timestamp.desc()).limit(5).all() # type: ignore
     
     # Get the OGD API key from environment variables
     ogd_api_key = os.getenv('OGD_API_KEY')
@@ -358,18 +453,19 @@ def dashboard():
     # Convert the list to a dictionary for the dashboard to maintain compatibility
     market_prices_dict = {}
     if market_prices_list:
-        # Get only a limited number of top crops for the dashboard view
-        top_crops = ['rice', 'wheat', 'sugarcane', 'cotton', 'onion', 'tomato']
+        top_crops = ['rice', 'wheat', 'sugarcane', 'cotton', 'onion', 'tomato', 'potato', 'maize', 'soybean']
+        seen = set()
         for record in market_prices_list:
-            if record['name'] in top_crops:
-                market_prices_dict[record['name']] = {
+            crop = str(record.get('name', ''))
+            matched = next((c for c in top_crops if c in crop or crop in c), None)
+            if matched and matched not in seen:
+                market_prices_dict[matched] = {
                     'price': record['price_modal'],
                     'unit': record['unit'],
-                    # You would need to determine trend and trend_value from historical data, 
-                    # for now, using a placeholder.
-                    'trend': 'stable', 
+                    'trend': 'stable',
                     'trend_value': 0.0
                 }
+                seen.add(matched)
     
     return render_template('dashboard.html',
                            weather=weather_data,
@@ -415,7 +511,11 @@ def market_prices():
             'rice': 'Rice', 'wheat': 'Wheat', 'sugarcane': 'Sugarcane',
             'cotton': 'Cotton', 'onion': 'Onion', 'tomato': 'Tomato',
             'potato': 'Potato', 'maize': 'Maize', 'soybean': 'Soybean',
-            'pulses': 'Pulses'
+            'pulses': 'Pulses', 'carrot': 'Carrot', 'banana': 'Banana',
+            'grapes': 'Grapes', 'garlic': 'Garlic', 'ginger': 'Ginger',
+            'chilli': 'Chilli', 'capsicum': 'Capsicum', 'cauliflower': 'Cauliflower',
+            'cabbage': 'Cabbage', 'coconut': 'Coconut', 'mango': 'Mango',
+            'orange': 'Orange', 'lentil': 'Lentil'
         },
         'hi': {
             'rice': 'चावल', 'wheat': 'गेहूँ', 'sugarcane': 'गन्ना',
@@ -449,20 +549,43 @@ def market_prices():
         }
     }
     
-    # Add translated crop names to the prices data
-    for price in prices:
-        crop_name = price['name']
-        price['translated_name'] = crop_translations.get(user_language, crop_translations['en']).get(crop_name, crop_name)
+    # Get current user language for translations
+    user_language = current_user.language_preference if current_user.is_authenticated else 'en'
+
+    # Build a fresh list with translations and images (safe for linter)
+    detailed_prices: List[Dict[str, Any]] = []
     
-    return render_template('market_prices.html', market_prices=prices, language=user_language)
+    for p in prices:
+        crop_name = str(p.get('name', ''))
+        # Get language mapping
+        lang_dict = crop_translations.get(user_language, crop_translations['en'])
+        
+        # Translate name
+        translated = lang_dict.get(crop_name)
+        if not translated:
+            translated = next((v for k, v in lang_dict.items() if k in crop_name), crop_name.capitalize())
+            
+        # Create a clean record
+        record = {
+            'name': crop_name,
+            'translated_name': translated,
+            'price_modal': p.get('price_modal', 0),
+            'price_min': p.get('price_min', 0),
+            'price_max': p.get('price_max', 0),
+            'unit': p.get('unit', 'per quintal'),
+            'market': p.get('market', 'N/A'),
+            'state': p.get('state', 'N/A'),
+            'img_url': get_crop_image(crop_name)
+        }
+        detailed_prices.append(record)
+    
+    return render_template('market_prices.html', market_prices=detailed_prices, language=user_language)
 
 @app.route('/activities')
 @login_required
 def activities():
     """Farming activities page"""
-    user_activities = Activity.query.filter_by(user_id=current_user.id)\
-                                   .order_by(Activity.timestamp.desc())\
-                                   .all()
+    user_activities = Activity.query.filter_by(user_id=current_user.id).order_by(Activity.timestamp.desc()).all() # type: ignore
     return render_template('activities.html', activities=user_activities)
 
 @app.route('/profile', methods=['GET', 'POST'])
@@ -491,8 +614,7 @@ def profile():
 @app.route('/chat')
 @login_required
 def chat():
-    chat_history = ChatMessage.query.filter_by(user_id=current_user.id)\
-                                   .order_by(ChatMessage.timestamp.asc()).all()
+    chat_history = ChatMessage.query.filter_by(user_id=current_user.id).order_by(ChatMessage.timestamp.asc()).all() # type: ignore
     return render_template('chat.html', chat_history=chat_history)
 
 @app.route('/send_message', methods=['POST'])
@@ -515,10 +637,10 @@ def send_message():
     ai_response = get_ai_response(message, user_context)
 
     chat_message = ChatMessage(
-        user_id=current_user.id,
-        message=message,
-        response=ai_response,
-        language=current_user.language_preference
+        user_id=current_user.id, # type: ignore
+        message=message, # type: ignore
+        response=ai_response, # type: ignore
+        language=current_user.language_preference # type: ignore
     )
     db.session.add(chat_message)
     db.session.commit()
@@ -540,9 +662,9 @@ def add_activity():
         return redirect(url_for('activities'))
     
     new_activity = Activity(
-        user_id=current_user.id,
-        activity_type=activity_type,
-        description=description
+        user_id=current_user.id, # type: ignore
+        activity_type=activity_type, # type: ignore
+        description=description # type: ignore
     )
     
     db.session.add(new_activity)

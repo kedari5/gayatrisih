@@ -2,10 +2,46 @@
 
 {% block title %}Sakhi - Your Farming Companion{% endblock %}
 
+{% block footer %}{% endblock %}
+
 {% block content %}
-<div class="h-[calc(100vh-12rem)] flex flex-col max-w-5xl mx-auto px-4 py-8">
+<style>
+    /* Hide floating Sakhi seed button on chat page */
+    #sakhi-seed-container { display: none !important; }
+    /* Make the chat fill the remaining viewport height */
+    #chat-wrapper {
+        display: flex;
+        flex-direction: column;
+        height: calc(100vh - 90px); /* account for navbar */
+    }
+    #chat-messages {
+        flex: 1;
+        overflow-y: auto;
+        padding: 2rem;
+        padding-bottom: 1rem;
+        scroll-behavior: smooth;
+    }
+    #chat-input-bar {
+        flex-shrink: 0;
+        padding: 1rem 2rem 1.5rem;
+        background: transparent;
+    }
+    @keyframes sprout {
+        0%, 100% { height: 10px; transform: translateY(0); }
+        50% { height: 20px; transform: translateY(-5px); }
+    }
+    .animate-sprout { animation: sprout 1.5s ease-in-out infinite; }
+    .animate-sprout-delayed { animation: sprout 1.5s ease-in-out 0.3s infinite; }
+    .animate-fade-in { animation: fadeIn 0.8s ease-out; }
+    .animate-slide-up { animation: slideUp 0.5s ease-out backwards; }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+</style>
+
+<div id="chat-wrapper" class="w-full max-w-4xl mx-auto">
+
     <!-- Chat Header -->
-    <div class="flex items-center justify-between mb-8 px-6 animate-fade-in">
+    <div class="flex items-center justify-between py-4 px-2 animate-fade-in flex-shrink-0">
         <div class="flex items-center space-x-4">
             <div class="relative">
                 <div class="w-14 h-14 bg-gradient-to-br from-forest to-moss rounded-2xl flex items-center justify-center shadow-lg shadow-forest/20">
@@ -27,114 +63,93 @@
         </div>
     </div>
 
-    <!-- Chat Messages Container -->
-    <div class="flex-grow glass-card rounded-[40px] flex flex-col overflow-hidden border border-white/60 shadow-2xl relative">
-        <!-- Background Decoration -->
-        <div class="absolute top-0 right-0 p-10 opacity-[0.03] pointer-events-none">
-            <i class="fas fa-leaf text-9xl"></i>
+    <!-- Scrollable Messages -->
+    <div id="chat-messages">
+        {% for chat in chat_history %}
+        <!-- User Message -->
+        <div class="flex flex-col items-end space-y-2 group animate-slide-up mb-6">
+            <div class="max-w-[80%] bg-forest text-cream px-6 py-4 rounded-[28px] rounded-br-[4px] shadow-lg shadow-forest/10">
+                {{ chat.message }}
+            </div>
+            <span class="text-[10px] text-forest/30 font-bold uppercase tracking-widest px-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                {{ chat.timestamp.strftime('%H:%M') }}
+            </span>
         </div>
-        
-        <div id="chat-messages" class="flex-grow overflow-y-auto p-8 space-y-8 scrollbar-thin scrollbar-thumb-forest/10 scrollbar-track-transparent">
-            {% for chat in chat_history %}
-            <!-- User Message -->
-            <div class="flex flex-col items-end space-y-2 group animate-slide-up">
-                <div class="max-w-[80%] bg-forest text-cream px-6 py-4 rounded-[28px] rounded-br-[4px] shadow-lg shadow-forest/10">
-                    {{ chat.message }}
-                </div>
-                <span class="text-[10px] text-forest/30 font-bold uppercase tracking-widest px-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                    {{ chat.timestamp.strftime('%H:%M') }}
-                </span>
-            </div>
-            
-            {% if chat.response %}
-            <!-- Bot Message -->
-            <div class="flex flex-col items-start space-y-2 group animate-slide-up">
-                <div class="flex items-end space-x-3 max-w-[85%]">
-                    <div class="w-8 h-8 rounded-xl bg-forest/5 flex items-center justify-center shrink-0 mb-1">
-                        <i class="fas fa-seedling text-forest/40"></i>
-                    </div>
-                    <div class="bg-white/80 backdrop-blur-sm border border-forest/10 text-forest px-6 py-4 rounded-[28px] rounded-bl-[4px] shadow-sm">
-                        {{ chat.response | safe }}
-                    </div>
-                </div>
-                <span class="text-[10px] text-forest/30 font-bold uppercase tracking-widest px-14 opacity-0 group-hover:opacity-100 transition-opacity">
-                    {{ chat.timestamp.strftime('%H:%M') }}
-                </span>
-            </div>
-            {% endif %}
-            {% endfor %}
-            
-            <!-- Sprouting Animation Placeholder -->
-            <div id="typing-indicator" class="hidden flex items-start space-x-3 max-w-[85%] animate-pulse">
+
+        {% if chat.response %}
+        <!-- Bot Message -->
+        <div class="flex flex-col items-start space-y-2 group animate-slide-up mb-6">
+            <div class="flex items-end space-x-3 max-w-[85%]">
                 <div class="w-8 h-8 rounded-xl bg-forest/5 flex items-center justify-center shrink-0 mb-1">
                     <i class="fas fa-seedling text-forest/40"></i>
                 </div>
-                <div class="bg-white/40 border border-forest/5 px-6 py-4 rounded-[28px] rounded-bl-[4px] flex space-x-2">
-                    <div class="w-2 h-4 bg-forest/20 rounded-full animate-sprout"></div>
-                    <div class="w-2 h-6 bg-forest/40 rounded-full animate-sprout-delayed"></div>
-                    <div class="w-2 h-3 bg-forest/30 rounded-full animate-sprout"></div>
+                <div class="bg-white/80 backdrop-blur-sm border border-forest/10 text-forest px-6 py-4 rounded-[28px] rounded-bl-[4px] shadow-sm">
+                    {{ chat.response | safe }}
                 </div>
             </div>
+            <span class="text-[10px] text-forest/30 font-bold uppercase tracking-widest px-14 opacity-0 group-hover:opacity-100 transition-opacity">
+                {{ chat.timestamp.strftime('%H:%M') }}
+            </span>
         </div>
+        {% endif %}
+        {% endfor %}
 
-        <!-- Input Area -->
-        <div class="p-6 bg-white/40 border-t border-forest/5">
-            <div class="relative flex items-center gap-4">
-                <div class="flex-grow relative group">
-                    <input type="text" id="message-input" 
-                           class="w-full pl-6 pr-14 py-4 bg-white border border-forest/10 rounded-2xl focus:ring-4 focus:ring-forest/5 focus:border-forest outline-none transition-all shadow-sm group-hover:shadow-md"
-                           placeholder="Ask Sakhi anything..." 
-                           data-translate="messagePlaceholder">
-                    <button id="voice-btn" onclick="startVoiceRecognition()" 
-                            class="absolute right-3 top-1/2 -translate-y-1/2 w-10 h-10 flex items-center justify-center rounded-xl text-forest/30 hover:text-forest hover:bg-forest/5 transition-all">
-                        <i class="fas fa-microphone text-xl"></i>
-                    </button>
-                </div>
-                <button onclick="sendMessage()" 
-                        class="w-14 h-14 bg-forest text-cream rounded-2xl flex items-center justify-center hover:bg-moss transition-all shadow-lg shadow-forest/20 group transform active:scale-95">
-                    <i class="fas fa-paper-plane group-hover:rotate-12 transition-transform"></i>
-                </button>
+        <!-- Typing Indicator -->
+        <div id="typing-indicator" class="hidden flex items-start space-x-3 max-w-[85%] animate-pulse mb-6">
+            <div class="w-8 h-8 rounded-xl bg-forest/5 flex items-center justify-center shrink-0 mb-1">
+                <i class="fas fa-seedling text-forest/40"></i>
+            </div>
+            <div class="bg-white/40 border border-forest/5 px-6 py-4 rounded-[28px] rounded-bl-[4px] flex space-x-2">
+                <div class="w-2 h-4 bg-forest/20 rounded-full animate-sprout"></div>
+                <div class="w-2 h-6 bg-forest/40 rounded-full animate-sprout-delayed"></div>
+                <div class="w-2 h-3 bg-forest/30 rounded-full animate-sprout"></div>
             </div>
         </div>
     </div>
+
+    <!-- Sticky Input Bar (always at bottom) -->
+    <div id="chat-input-bar">
+        <div class="relative flex items-center gap-4">
+            <div class="flex-grow relative group">
+                <input type="text" id="message-input"
+                       class="w-full pl-6 pr-14 py-4 bg-white border border-forest/10 rounded-2xl focus:ring-4 focus:ring-forest/5 focus:border-forest outline-none transition-all shadow-sm group-hover:shadow-md"
+                       placeholder="Ask Sakhi anything..."
+                       data-translate="messagePlaceholder">
+                <button id="voice-btn" onclick="startVoiceRecognition()"
+                        class="absolute right-3 top-1/2 -translate-y-1/2 w-10 h-10 flex items-center justify-center rounded-xl text-forest/30 hover:text-forest hover:bg-forest/5 transition-all">
+                    <i class="fas fa-microphone text-xl"></i>
+                </button>
+            </div>
+            <button onclick="sendMessage()"
+                    class="w-14 h-14 bg-forest text-cream rounded-2xl flex items-center justify-center hover:bg-moss transition-all shadow-lg shadow-forest/20 group transform active:scale-95">
+                <i class="fas fa-paper-plane group-hover:rotate-12 transition-transform"></i>
+            </button>
+        </div>
+    </div>
+
 </div>
+{% endblock %}
 
-<style>
-    @keyframes sprout {
-        0%, 100% { height: 10px; transform: translateY(0); }
-        50% { height: 20px; transform: translateY(-5px); }
-    }
-    .animate-sprout { animation: sprout 1.5s ease-in-out infinite; }
-    .animate-sprout-delayed { animation: sprout 1.5s ease-in-out 0.3s infinite; }
-    
-    .animate-fade-in { animation: fadeIn 0.8s ease-out; }
-    .animate-slide-up { animation: slideUp 0.5s ease-out backwards; }
-    
-    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-    @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-</style>
-
+{% block scripts %}
 <script>
 async function sendMessage() {
     const input = document.getElementById('message-input');
     const message = input.value.trim();
     if (!message) return;
-    
+
     addMessageToChat(message, 'user');
     input.value = '';
-    
-    // Show typing indicator
+
     const typingIndicator = document.getElementById('typing-indicator');
     typingIndicator.classList.remove('hidden');
     typingIndicator.scrollIntoView({ behavior: 'smooth' });
-    
+
     try {
         const response = await fetch('/send_message', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({message: message})
         });
-        
         const data = await response.json();
         typingIndicator.classList.add('hidden');
         addMessageToChat(data.response, 'bot');
@@ -148,19 +163,17 @@ function addMessageToChat(message, sender) {
     const chatContainer = document.getElementById('chat-messages');
     const messageDiv = document.createElement('div');
     const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-    
+
     if (sender === 'user') {
-        messageDiv.className = 'flex flex-col items-end space-y-2 group';
+        messageDiv.className = 'flex flex-col items-end space-y-2 group mb-6';
         messageDiv.innerHTML = `
             <div class="max-w-[80%] bg-forest text-cream px-6 py-4 rounded-[28px] rounded-br-[4px] shadow-lg shadow-forest/10">
                 ${message}
             </div>
-            <span class="text-[10px] text-forest/30 font-bold uppercase tracking-widest px-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                ${time}
-            </span>
+            <span class="text-[10px] text-forest/30 font-bold uppercase tracking-widest px-2 opacity-0 group-hover:opacity-100 transition-opacity">${time}</span>
         `;
     } else {
-        messageDiv.className = 'flex flex-col items-start space-y-2 group';
+        messageDiv.className = 'flex flex-col items-start space-y-2 group mb-6';
         messageDiv.innerHTML = `
             <div class="flex items-end space-x-3 max-w-[85%]">
                 <div class="w-8 h-8 rounded-xl bg-forest/5 flex items-center justify-center shrink-0 mb-1">
@@ -170,23 +183,21 @@ function addMessageToChat(message, sender) {
                     ${message}
                 </div>
             </div>
-            <span class="text-[10px] text-forest/30 font-bold uppercase tracking-widest px-14 opacity-0 group-hover:opacity-100 transition-opacity">
-                ${time}
-            </span>
+            <span class="text-[10px] text-forest/30 font-bold uppercase tracking-widest px-14 opacity-0 group-hover:opacity-100 transition-opacity">${time}</span>
         `;
     }
-    
-    chatContainer.appendChild(messageDiv);
-    
-    // Animate new message
-    gsap.from(messageDiv, {
-        opacity: 0,
-        y: 20,
-        duration: 0.5,
-        ease: "power2.out"
-    });
-    
-    chatContainer.scrollTop = chatContainer.scrollHeight;
+
+    // Insert before typing indicator
+    const typingIndicator = document.getElementById('typing-indicator');
+    chatContainer.insertBefore(messageDiv, typingIndicator);
+
+    if (typeof gsap !== 'undefined') {
+        gsap.from(messageDiv, { opacity: 0, y: 20, duration: 0.5, ease: "power2.out" });
+    }
+
+    // Scroll messages div
+    const messagesEl = document.getElementById('chat-messages');
+    messagesEl.scrollTop = messagesEl.scrollHeight;
 }
 
 function startVoiceRecognition() {
@@ -194,28 +205,23 @@ function startVoiceRecognition() {
         alert(getTranslation('voiceNotSupported'));
         return;
     }
-    
     const recognition = new webkitSpeechRecognition();
     recognition.lang = getSpeechRecognitionLanguage();
-    
     const voiceBtn = document.getElementById('voice-btn');
     const input = document.getElementById('message-input');
-    
+
     recognition.onstart = () => {
         voiceBtn.classList.add('text-emerald-500', 'animate-pulse');
         input.placeholder = getTranslation('listening');
     };
-    
     recognition.onresult = (event) => {
         input.value = event.results[0][0].transcript;
         input.placeholder = getTranslation('messagePlaceholder');
     };
-    
     recognition.onend = () => {
         voiceBtn.classList.remove('text-emerald-500', 'animate-pulse');
         input.placeholder = getTranslation('messagePlaceholder');
     };
-    
     recognition.start();
 }
 
@@ -231,7 +237,8 @@ function getTranslation(key) {
     const defaults = {
         'errorMessage': 'Sorry, I encountered an error. Please try again.',
         'listening': 'Listening...',
-        'messagePlaceholder': 'Ask Sakhi anything...'
+        'messagePlaceholder': 'Ask Sakhi anything...',
+        'voiceNotSupported': 'Voice input is not supported in this browser.'
     };
     return defaults[key] || key;
 }
@@ -240,6 +247,10 @@ document.getElementById('message-input').addEventListener('keypress', (e) => {
     if (e.key === 'Enter') sendMessage();
 });
 
-// Translations handle elsewhere or we can merge here like before
+// Auto-scroll to bottom on load
+document.addEventListener('DOMContentLoaded', () => {
+    const messagesEl = document.getElementById('chat-messages');
+    if (messagesEl) messagesEl.scrollTop = messagesEl.scrollHeight;
+});
 </script>
 {% endblock %}
