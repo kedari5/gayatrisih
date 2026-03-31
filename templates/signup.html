@@ -186,11 +186,12 @@
     }
 
     function startVoiceInput(fieldId) {
-        if (!('webkitSpeechRecognition' in window)) {
-            alert("Your browser does not support voice input.");
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        if (!SpeechRecognition) {
+            alert("Voice input is not supported in this browser. Please use Google Chrome or Microsoft Edge for the best experience.");
             return;
         }
-        const recognition = new webkitSpeechRecognition();
+        const recognition = new SpeechRecognition();
         const currentLang = document.getElementById("language_preference").value;
         recognition.lang = currentLang + "-IN";
         

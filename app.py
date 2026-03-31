@@ -40,11 +40,16 @@ load_dotenv()
 GOOGLE_AI_API_KEY = os.environ.get("GOOGLE_AI_API_KEY")
 
 if GOOGLE_AI_API_KEY:
-    genai.configure(api_key=GOOGLE_AI_API_KEY.strip('"'))
+    # Remove quotes and whitespace that might be in the .env value
+    clean_key = str(GOOGLE_AI_API_KEY).strip().strip('"').strip("'")
+    genai.configure(api_key=clean_key)
     genai_client = genai.GenerativeModel("gemini-1.5-flash")
+    # Using a safe way to show key prefix to satisfy linter
+    key_prefix = clean_key[:8] if len(clean_key) >= 8 else clean_key
+    logging.info(f"Google AI API configured with key starting with: {key_prefix}...")
 else:
     genai_client = None
-    logging.warning("GOOGLE_AI_API_KEY not set. AI features will be unavailable.")
+    logging.warning("GOOGLE_AI_API_KEY not found in environment. AI Assistant will be disabled.")
 
 # ------------------- Languages -------------------
 LANGUAGES = {
@@ -93,7 +98,7 @@ class Activity(db.Model):
     user_id: int = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     activity_type: str = db.Column(db.String(50), nullable=False)
     description: str = db.Column(db.Text, nullable=False)
-    date_recorded: datetime = db.Column(db.Date, default=datetime.utcnow) # type: ignore
+    date_recorded: datetime = db.Column(db.Date, default=lambda: datetime.utcnow().date())
     timestamp: datetime = db.Column(db.DateTime, default=datetime.utcnow)
 
 # ------------------- Flask-Login -------------------
@@ -363,14 +368,30 @@ def index():
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
     if request.method == 'POST':
-        name = request.form['name']
-        phone_number = request.form['phone_number']
-        password = request.form['password']
-        language_preference = request.form.get('language_preference', 'en')
-        location = request.form.get('location', '')
+        if request.is_json:
+            data = request.get_json()
+            name = data.get('name')
+            phone_number = data.get('phone_number')
+            password = data.get('password')
+            language_preference = data.get('language_preference', 'en')
+            location = data.get('location', '')
+        else:
+            name = request.form.get('name')
+            phone_number = request.form.get('phone_number')
+            password = request.form.get('password')
+            language_preference = request.form.get('language_preference', 'en')
+            location = request.form.get('location', '')
+
+        if not phone_number or not password:
+            if request.is_json:
+                return jsonify({'status': 'error', 'message': 'Missing fields'}), 400
+            flash('Missing fields!', 'error')
+            return render_template('signup.html', languages=LANGUAGES)
 
         existing_user = User.query.filter_by(phone_number=phone_number).first()
         if existing_user:
+            if request.is_json:
+                return jsonify({'status': 'error', 'message': 'Phone already registered'}), 400
             flash('Phone number already registered!', 'error')
             return render_template('signup.html', languages=LANGUAGES)
 
@@ -391,6 +412,8 @@ def signup():
         db.session.commit()
 
         login_user(user)
+        if request.is_json:
+            return jsonify({'status': 'success', 'message': 'Account created'})
         flash('Account created successfully!', 'success')
         return redirect(url_for('dashboard'))
 
@@ -399,8 +422,13 @@ def signup():
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
-        phone_number = request.form.get('phone_number')
-        password = request.form.get('password')
+        if request.is_json:
+            data = request.get_json()
+            phone_number = data.get('phone_number')
+            password = data.get('password')
+        else:
+            phone_number = request.form.get('phone_number')
+            password = request.form.get('password')
 
         user = None
         if phone_number:
@@ -409,17 +437,23 @@ def login():
                 user = None
         else:
             # Login by password only
-            for u in User.query.all():
+            all_users = User.query.filter(User.password_hash != None).all()
+            for u in all_users:
                 if check_password_hash(u.password_hash, password):
                     user = u
                     break
 
         if user:
             login_user(user)
+            if request.is_json or request.args.get('format') == 'json':
+                return jsonify({'status': 'success', 'message': 'Logged in successfully', 'user_id': user.id})
             next_page = request.args.get('next')
             return redirect(next_page or url_for('dashboard'))
         else:
-            flash('Invalid password!' if not phone_number else 'Invalid phone number or password!', 'error')
+            msg = 'Invalid password!' if not phone_number else 'Invalid phone number or password!'
+            if request.is_json:
+                return jsonify({'status': 'error', 'message': msg}), 401
+            flash(msg, 'error')
 
     return render_template('login.html')
 
@@ -549,9 +583,6 @@ def market_prices():
         }
     }
     
-    # Get current user language for translations
-    user_language = current_user.language_preference if current_user.is_authenticated else 'en'
-
     # Build a fresh list with translations and images (safe for linter)
     detailed_prices: List[Dict[str, Any]] = []
     
@@ -708,31 +739,106 @@ def text_to_speech():
         logging.error(f"TTS error: {e}")
         return jsonify({'error': 'TTS failed'}), 500
 
-@app.route('/speech_to_text', methods=['POST'])
-def speech_to_text():
-    """
-    Receives audio from frontend mic and returns text.
-    Expects form-data:
-    - audio: audio file (wav)
-    - language: selected language code (en, te, hi, etc.)
-    """
-    audio_file = request.files.get('audio')
-    language = request.form.get('language', 'en')
+# ------------------- REST API Endpoints (Mobile App Support) -------------------
 
-    if not audio_file:
-        return jsonify({'error': 'No audio file provided'}), 400
+@app.route('/api/dashboard')
+@login_required
+def api_dashboard():
+    """Returns dashboard data for mobile app as JSON"""
+    weather_data = None
+    if current_user.farmer_profile and current_user.farmer_profile.location:
+        weather_data = get_weather_data(current_user.farmer_profile.location)
 
-    try:
-        # For now, return a placeholder since we don't have a real STT service
-        # In a real implementation, you would integrate with Google Speech-to-Text or similar
-        recognized_text = "This is a demo speech-to-text response. In a real implementation, this would be the transcribed text from your audio."
+    # Market prices
+    ogd_api_key = os.getenv('OGD_API_KEY')
+    market_prices_list = get_market_prices_from_ogd(ogd_api_key, OGD_RESOURCE_ID) if ogd_api_key else []
+    
+    top_crops = ['rice', 'wheat', 'sugarcane', 'cotton', 'onion']
+    filtered_prices = []
+    seen = set()
+    for p in market_prices_list:
+        name = str(p.get('name', '')).lower()
+        matched = next((c for c in top_crops if c in str(name)), None)
+        if matched and matched not in seen:
+            p_copy = dict(p)
+            p_copy['img_url'] = get_crop_image(matched)
+            filtered_prices.append(p_copy)
+            seen.add(matched)
+
+    recent_chats = ChatMessage.query.filter_by(user_id=current_user.id).order_by(ChatMessage.timestamp.desc()).limit(3).all()
+    
+    return jsonify({
+        'weather': weather_data,
+        'market_prices': filtered_prices,
+        'recent_messages': [{'msg': c.message, 'resp': c.response[:100] + '...'} for c in recent_chats],
+        'user': {
+            'name': current_user.farmer_profile.name if current_user.farmer_profile else 'Farmer',
+            'language': current_user.language_preference
+        }
+    })
+
+@app.route('/api/market_prices')
+@login_required
+def api_market_prices():
+    """Returns full market price list as JSON for mobile"""
+    ogd_api_key = os.getenv('OGD_API_KEY')
+    prices = get_market_prices_from_ogd(ogd_api_key, OGD_RESOURCE_ID) if ogd_api_key else []
+    
+    detailed_prices = []
+    for p in prices:
+        p_copy = dict(p)
+        p_copy['img_url'] = get_crop_image(p_copy.get('name', ''))
+        detailed_prices.append(p_copy)
         
-        return jsonify({'text': recognized_text})
-    except Exception as e:
-        logging.error(f"Speech-to-text error: {e}")
-        return jsonify({'error': 'Speech-to-text failed'}), 500
+    return jsonify({'status': 'success', 'data': detailed_prices})
 
-# ------------------- Error Handlers -------------------
+@app.route('/api/activities', methods=['GET', 'POST'])
+@login_required
+def api_activities():
+    """Mobile endpoint for viewing and adding farm activities"""
+    if request.method == 'POST':
+        data = request.get_json()
+        activity_type = data.get('activity_type')
+        description = data.get('description')
+        
+        if not activity_type or not description:
+            return jsonify({'status': 'error', 'message': 'Missing fields'}), 400
+            
+        new_act = Activity(user_id=current_user.id, activity_type=activity_type, description=description) # type: ignore
+        db.session.add(new_act)
+        db.session.commit()
+        return jsonify({'status': 'success', 'message': 'Activity recorded'})
+
+    # GET request
+    acts = Activity.query.filter_by(user_id=current_user.id).order_by(Activity.timestamp.desc()).all()
+    return jsonify({
+        'status': 'success',
+        'activities': [{
+            'id': a.id,
+            'type': a.activity_type,
+            'desc': a.description,
+            'date': a.date_recorded.strftime('%Y-%m-%d') if a.date_recorded else None
+        } for a in acts]
+    })
+
+@app.route('/api/profile')
+@login_required
+def api_profile():
+    """Returns user profile data for mobile"""
+    p = current_user.farmer_profile
+    if not p:
+        return jsonify({'error': 'Profile not found'}), 404
+        
+    return jsonify({
+        'name': p.name,
+        'location': p.location,
+        'crops': p.crop_type,
+        'land_size': p.land_size,
+        'experience': p.experience_years,
+        'language': current_user.language_preference
+    })
+
+# ------------------- Original TTS/STT Routes -------------------
 @app.errorhandler(404)
 def not_found_error(error):
     return render_template('404.html'), 404

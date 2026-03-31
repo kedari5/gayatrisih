@@ -24,8 +24,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // Voice recognition functionality
 function startVoiceRecognition() {
-    if ('webkitSpeechRecognition' in window) {
-        const recognition = new webkitSpeechRecognition();
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (SpeechRecognition) {
+        const recognition = new SpeechRecognition();
         recognition.lang = 'en-US';
         recognition.interimResults = false;
         recognition.maxAlternatives = 1;
@@ -42,7 +43,7 @@ function startVoiceRecognition() {
             console.error('Speech recognition error:', event.error);
         };
     } else {
-        alert('Speech recognition is not supported in your browser.');
+        alert('Voice recognition is not supported in this browser. Please use Google Chrome or Microsoft Edge for the best experience.');
     }
 }
 

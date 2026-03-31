@@ -115,7 +115,7 @@
                        class="w-full pl-6 pr-14 py-4 bg-white border border-forest/10 rounded-2xl focus:ring-4 focus:ring-forest/5 focus:border-forest outline-none transition-all shadow-sm group-hover:shadow-md"
                        placeholder="Ask Sakhi anything..."
                        data-translate="messagePlaceholder">
-                <button id="voice-btn" onclick="startVoiceRecognition()"
+                <button id="voice-btn" onclick="toggleVoiceRecognition()"
                         class="absolute right-3 top-1/2 -translate-y-1/2 w-10 h-10 flex items-center justify-center rounded-xl text-forest/30 hover:text-forest hover:bg-forest/5 transition-all">
                     <i class="fas fa-microphone text-xl"></i>
                 </button>
@@ -132,10 +132,15 @@
 
 {% block scripts %}
 <script>
+let recognition = null;
+let isListening = false;
+
 async function sendMessage() {
     const input = document.getElementById('message-input');
     const message = input.value.trim();
     if (!message) return;
+
+    if (isListening) stopVoiceRecognition();
 
     addMessageToChat(message, 'user');
     input.value = '';
@@ -187,7 +192,6 @@ function addMessageToChat(message, sender) {
         `;
     }
 
-    // Insert before typing indicator
     const typingIndicator = document.getElementById('typing-indicator');
     chatContainer.insertBefore(messageDiv, typingIndicator);
 
@@ -195,33 +199,67 @@ function addMessageToChat(message, sender) {
         gsap.from(messageDiv, { opacity: 0, y: 20, duration: 0.5, ease: "power2.out" });
     }
 
-    // Scroll messages div
     const messagesEl = document.getElementById('chat-messages');
     messagesEl.scrollTop = messagesEl.scrollHeight;
 }
 
+function toggleVoiceRecognition() {
+    if (isListening) {
+        stopVoiceRecognition();
+    } else {
+        startVoiceRecognition();
+    }
+}
+
+function stopVoiceRecognition() {
+    if (recognition) {
+        recognition.stop();
+    }
+}
+
 function startVoiceRecognition() {
-    if (!('webkitSpeechRecognition' in window)) {
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SpeechRecognition) {
         alert(getTranslation('voiceNotSupported'));
         return;
     }
-    const recognition = new webkitSpeechRecognition();
+    
+    recognition = new SpeechRecognition();
     recognition.lang = getSpeechRecognitionLanguage();
+    recognition.continuous = true;
+    recognition.interimResults = true;
+
     const voiceBtn = document.getElementById('voice-btn');
     const input = document.getElementById('message-input');
+    const micIcon = voiceBtn.querySelector('i');
 
     recognition.onstart = () => {
-        voiceBtn.classList.add('text-emerald-500', 'animate-pulse');
+        isListening = true;
+        voiceBtn.classList.add('text-red-500', 'animate-pulse');
+        micIcon.className = 'fas fa-stop text-xl';
         input.placeholder = getTranslation('listening');
     };
+
     recognition.onresult = (event) => {
-        input.value = event.results[0][0].transcript;
-        input.placeholder = getTranslation('messagePlaceholder');
+        let transcript = '';
+        for (let i = 0; i < event.results.length; i++) {
+            transcript += event.results[i][0].transcript;
+        }
+        input.value = transcript;
     };
+
+    recognition.onerror = (event) => {
+        console.error('Speech recognition error:', event.error);
+        stopVoiceRecognition();
+    };
+
     recognition.onend = () => {
-        voiceBtn.classList.remove('text-emerald-500', 'animate-pulse');
+        isListening = false;
+        voiceBtn.classList.remove('text-red-500', 'animate-pulse');
+        micIcon.className = 'fas fa-microphone text-xl';
         input.placeholder = getTranslation('messagePlaceholder');
     };
+
     recognition.start();
 }
 
@@ -238,7 +276,7 @@ function getTranslation(key) {
         'errorMessage': 'Sorry, I encountered an error. Please try again.',
         'listening': 'Listening...',
         'messagePlaceholder': 'Ask Sakhi anything...',
-        'voiceNotSupported': 'Voice input is not supported in this browser.'
+        'voiceNotSupported': 'Voice input is not supported in this browser. Please use Google Chrome or Microsoft Edge for the best experience.'
     };
     return defaults[key] || key;
 }
